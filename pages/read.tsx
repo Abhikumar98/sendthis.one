@@ -4,6 +4,10 @@ import { db, FirebaseCollections } from "../utils/firebase";
 import { useRouter } from "next/router";
 import queryString from "query-string";
 
+interface Data {
+    text: string;
+}
+
 const Read = () => {
     const textContent = "";
 
@@ -12,7 +16,7 @@ const Read = () => {
     };
 
     const router = useRouter();
-    const [data, setData] = useState({});
+    const [data, setData] = useState<Data | null>(null);
     const fetchData = async () => {
         try {
             const code = queryString.parseUrl(router.asPath).query;
@@ -60,12 +64,12 @@ const Read = () => {
                 <div className="my-4">
                     <textarea
                         disabled={true}
-                        value={data.text}
+                        value={data?.text ?? ""}
                         className="form-textarea resize-none border rounded-md w-full max-w-full"
                     />
                 </div>
 
-                {data.text && (
+                {data?.text && (
                     <button
                         onClick={copyToClipboard}
                         className={`my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex `}
