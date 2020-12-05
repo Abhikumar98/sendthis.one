@@ -1,5 +1,3 @@
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import Link from "next/link";
 
 const Home = () => {
@@ -11,7 +9,7 @@ const Home = () => {
                 </div>
             </Link>
             <Link href="/scan">
-                <div className="w-1/2 h-screen bg-yellow-500 flex justify-center items-center text-white font-bold text-4xl cursor-pointer hover:bg-yellow-400">
+                <div className="w-1/2 h-screen bg-yellow-400 flex justify-center items-center text-white font-bold text-4xl cursor-pointer hover:bg-yellow-300">
                     Scan
                 </div>
             </Link>
