@@ -8,7 +8,10 @@ const QRCodeReader = ({ getData }: { getData: (data: string) => void }) => {
     };
 
     const handleScan = (result: string) => {
-        console.log(result);
+
+        
+
+        getData(result);
     };
 
     const [cameraState, setCameraState] = useState<"environment" | "user">(
@@ -26,10 +29,12 @@ const QRCodeReader = ({ getData }: { getData: (data: string) => void }) => {
                 className="w-1/4 mb-24"
                 defaultValue={options[0]}
                 options={options}
-                onChange={(e) => console.log(e)}
+                onChange={(e) =>
+                    setCameraState(e.value as "environment" | "user")
+                }
             />
             <QrReader
-                delay={300}
+                delay={500}
                 onError={handleError}
                 onScan={handleScan}
                 facingMode={cameraState}

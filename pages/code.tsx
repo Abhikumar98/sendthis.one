@@ -12,7 +12,13 @@ const code = () => {
             <div className="text-bold text-3xl mb-10">
                 Scan this code to get the download link
             </div>
-            <QRCode value={code["code"] ?? "invalid"} />
+            <QRCode
+                value={
+                    code["code"]
+                        ? `${window.location.origin}/read?code=${code["code"]}`
+                        : "invalid"
+                }
+            />
         </div>
     );
 };

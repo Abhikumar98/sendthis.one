@@ -1,12 +1,16 @@
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 
 const DynamicComponent = dynamic(() => import("../components/QRCodeReader"), {
     ssr: false,
 });
 
 const Scan = () => {
+    const router = useRouter();
+    console.log(router);
+
     const handleDataValidation = (value: string) => {
-        console.log("data ----> ", value);
+        console.log("data ----> ", window.location);
     };
 
     return (
@@ -14,7 +18,7 @@ const Scan = () => {
             <div className="text-4xl py-5 text-center font-bold font-sans">
                 Scan code
             </div>
-            <div className="text-xl py-5 w-3/4 font-sans flex mx-auto text-center">
+            <div className="text-xl py-5 w-3/4 font-sans flex mx-auto justify-center mb-5 text-center">
                 Your data will be uploaded anonymously and will be deleted
                 automatically after 24 hours
             </div>
