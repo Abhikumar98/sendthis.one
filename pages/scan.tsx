@@ -11,7 +11,9 @@ const Scan = () => {
 
     const handleDataValidation = (value: string) => {
         // console.log(value);
-        router.push(value);
+        if (value) {
+            router.push(value);
+        }
     };
 
     return (
