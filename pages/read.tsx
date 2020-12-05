@@ -35,7 +35,7 @@ const Read = () => {
                 .get();
 
             if (docSnapshot.exists) {
-                setData(docSnapshot.data());
+                setData(docSnapshot.data() as Data);
             }
         } catch (error) {
             console.error(error);
