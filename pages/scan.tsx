@@ -10,8 +10,8 @@ const Scan = () => {
     console.log(router);
 
     const handleDataValidation = (value: string) => {
-        console.log(value);
-        // router.push(value);
+        // console.log(value);
+        router.push(value);
     };
 
     return (
