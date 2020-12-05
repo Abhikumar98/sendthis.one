@@ -49,7 +49,6 @@ const Upload = () => {
 
     return (
         <div className="w-screen h-screen bg-blue-50 overflow-scroll">
-            (
             <div className="text-4xl py-5 text-center font-bold font-sans">
                 Upload files
             </div>

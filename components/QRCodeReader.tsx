@@ -8,9 +8,6 @@ const QRCodeReader = ({ getData }: { getData: (data: string) => void }) => {
     };
 
     const handleScan = (result: string) => {
-
-        
-
         getData(result);
     };
 
