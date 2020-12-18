@@ -5,81 +5,147 @@ import { useRouter } from "next/router";
 import queryString from "query-string";
 
 interface Data {
-    text: string;
+	text: string;
+}
+
+interface FilesMetadata {
+	readonly name: string;
+	readonly path: string;
+	readonly size: number;
 }
 
 const Read = () => {
-    const textContent = "";
+	const [files, setFiles] = useState<FilesMetadata[]>([]);
 
-    const signUpAnonymously = async () => {
-        await firebase.auth().signInAnonymously();
-    };
+	const signUpAnonymously = async () => {
+		await firebase.auth().signInAnonymously();
+	};
 
-    const router = useRouter();
-    const [data, setData] = useState<Data | null>(null);
-    const fetchData = async () => {
-        try {
-            const code = queryString.parseUrl(router.asPath).query;
-            if (!firebase.auth().currentUser) {
-                await signUpAnonymously();
-            }
-            if (!code["code"]) {
-                throw new Error("Invalid doc id");
-            }
+	const router = useRouter();
+	const [data, setData] = useState<Data | null>(null);
+	const fetchData = async () => {
+		try {
+			const code = queryString.parseUrl(router.asPath).query;
+			if (!firebase.auth().currentUser) {
+				await signUpAnonymously();
+			}
+			if (!code["code"]) {
+				throw new Error("Invalid doc id");
+			}
 
-            const id = code["code"] as string;
+			const id = code["code"] as string;
 
-            const docSnapshot = await db
-                .collection(FirebaseCollections.Data)
-                .doc(id)
-                .get();
+			const docSnapshot = await db
+				.collection(FirebaseCollections.Data)
+				.doc(id)
+				.get();
 
-            if (docSnapshot.exists) {
-                setData(docSnapshot.data() as Data);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+			if (!docSnapshot.exists) {
+				throw new Error("No such document exists");
+			}
+			setData(docSnapshot.data() as Data);
 
-    const copyToClipboard = () => {
-        const el = document.createElement("textarea");
-        el.value = data.text;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand("copy");
-        document.body.removeChild(el);
-    };
+			const firebaseStorageRef = firebase.storage().ref(id);
+			const allFiles = await firebaseStorageRef.listAll();
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+			const promises = allFiles.items.map((file) => file.getMetadata());
 
-    return (
-        <div className="w-screen h-screen bg-blue-50 overflow-scroll">
-            <div className="text-4xl py-5 text-center font-bold font-sans">
-                Here is the data shared to you
-            </div>
-            <div className="flex mx-auto w-1/2 flex-col">
-                <div className="my-4">
-                    <textarea
-                        disabled={true}
-                        value={data?.text ?? ""}
-                        className="form-textarea resize-none border rounded-md w-full max-w-full"
-                    />
-                </div>
+			const result = await Promise.all(promises);
+			setFiles(result);
+			console.log(result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-                {data?.text && (
-                    <button
-                        onClick={copyToClipboard}
-                        className={`my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex `}
-                    >
-                        Copy text
-                    </button>
-                )}
-            </div>
-        </div>
-    );
+	const copyToClipboard = () => {
+		const el = document.createElement("textarea");
+		el.value = data.text;
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand("copy");
+		document.body.removeChild(el);
+	};
+
+	const downloadFile = async (filePath: string) => {
+		try {
+			const downloadRef = firebase.storage().ref(filePath);
+
+			// download file using downloadJs
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	return (
+		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
+			<div className="text-4xl py-5 text-center font-bold font-sans">
+				Here is the data shared to you
+			</div>
+			{!!data?.text?.length && (
+				<div className="flex mx-auto w-1/2 flex-col">
+					<div className="my-4">
+						<textarea
+							disabled={true}
+							value={data.text}
+							className="form-textarea resize-none border rounded-md w-full max-w-full"
+						/>
+					</div>
+					<button
+						onClick={copyToClipboard}
+						className={
+							"my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex "
+						}
+					>
+						Copy text
+					</button>
+				</div>
+			)}
+			{!!files.length && (
+				<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
+					{files.map((file, index) => (
+						<div
+							key={index}
+							className=" my-1 flex items-center justify-center w-max bg-blue-100 p-1 m-auto"
+						>
+							<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
+								{file.name.split(".").slice(0, -1).join(".")}
+							</div>
+							<div className="w-10 ml-2 rounded-sm px-1  flex items-center bg-blue-200">
+								{file.name.split(".").slice(-1)}
+							</div>
+							<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
+								{(file.size / (1024 * 1024)).toFixed(2)} MB
+							</div>
+							<div
+								className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
+								onClick={() => downloadFile(file.path)}
+							>
+								<svg
+									className="h-4 w-4"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+									/>
+								</svg>
+							</div>
+						</div>
+					))}
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default Read;
