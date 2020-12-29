@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import queryString from "query-string";
 import DownloadFile from "downloadjs";
 import TextareaAutosize from "react-textarea-autosize";
+import filesize from "filesize";
+
 import { DocumentData } from "../contracts";
 
 interface FilesMetadata {
@@ -74,24 +76,11 @@ const Read = () => {
 				.ref(filePath)
 				.getDownloadURL();
 
-			// download(downloadRef);
-
-			console.log(downloadRef);
-
-			const selectedFile = files[index];
-
-			const promiseBlobData = await fetch(downloadRef, {
-				mode: "cors",
-			});
-
-			console.log(promiseBlobData);
+			const promiseBlobData = await fetch(downloadRef);
 
 			const blobData = await promiseBlobData.blob();
-			console.log(blobData);
 
-			DownloadFile(downloadRef, files[index].name);
-
-			// download file using downloadJs
+			DownloadFile(blobData, files[index].name);
 		} catch (error) {
 			console.error(error);
 		}
@@ -140,7 +129,7 @@ const Read = () => {
 								{file.name.split(".").slice(-1)}
 							</div>
 							<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
-								{(file.size / (1024 * 1024)).toFixed(2)} MB
+								{filesize(file.size)}
 							</div>
 							<div
 								className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
