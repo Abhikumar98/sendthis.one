@@ -24,6 +24,7 @@ const Upload = () => {
 	const uploadDate = async () => {
 		try {
 			const docRef = dataCollectionRef;
+			toast.loading("Uploading your data...");
 
 			await signUpAnonymously();
 
@@ -47,8 +48,6 @@ const Upload = () => {
 				const downloadURL = await firebaseStorageRef.getDownloadURL();
 				savingDocument.storageURL = String(downloadURL);
 			}
-
-			toast.loading("Uploading your data...");
 
 			await docRef.set({
 				...savingDocument,
@@ -78,7 +77,6 @@ const Upload = () => {
 				.reduce((total, current) => total + current, 0) > uploadLimit;
 
 		if (isLimitCrossed) {
-			console.log("came here");
 			toast.error("Oops, you have crossed the upload limit of 20MB");
 			return;
 		}
@@ -88,7 +86,6 @@ const Upload = () => {
 	};
 
 	const removeFile = (index: number) => {
-		console.log(index, files);
 		const updatedFiles = [...files];
 
 		const newObj = updatedFiles.filter((_file, i) => index !== i);
@@ -101,8 +98,6 @@ const Upload = () => {
 			firebase.auth().signOut();
 		};
 	}, []);
-
-	console.log(files);
 
 	const currentUploadedFilesSize =
 		files
@@ -186,6 +181,7 @@ const Upload = () => {
 									multiple
 									onChange={handleChange}
 									hidden
+									size={uploadLimit}
 								/>
 							</label>
 						</div>
@@ -197,7 +193,7 @@ const Upload = () => {
 										key={index}
 										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto"
 									>
-										<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
+										<div className=" overflow-hidden px-1 w-56 sm:w-auto whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
 											{file.name
 												.split(".")
 												.slice(0, -1)
@@ -239,7 +235,7 @@ const Upload = () => {
 						isUploading ? "bg-gray-400" : ""
 					} ${!isButtonDisabled ? "bg-blue-500" : "bg-gray-200"}`}
 				>
-					Ready to share
+					Upload ⬆
 				</button>
 			</div>
 			<Toaster />

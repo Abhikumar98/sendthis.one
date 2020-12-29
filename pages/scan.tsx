@@ -8,10 +8,9 @@ const DynamicComponent = dynamic(() => import("../components/QRCodeReader"), {
 
 const Scan = () => {
 	const router = useRouter();
-	console.log(router);
 
 	const handleDataValidation = (value: string) => {
-		// console.log(value);
+		//
 		if (value) {
 			router.push(value);
 		}

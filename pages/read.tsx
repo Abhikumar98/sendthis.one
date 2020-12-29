@@ -7,7 +7,6 @@ import DownloadFile from "downloadjs";
 import TextareaAutosize from "react-textarea-autosize";
 import filesize from "filesize";
 
-import Image from "next/image";
 import { DocumentData, PageStatus } from "../contracts";
 
 interface FilesMetadata {
@@ -95,8 +94,6 @@ const Read = () => {
 		fetchData();
 	}, []);
 
-	console.log(pageStatus);
-
 	return (
 		<div className="h-screen w-screen">
 			{pageStatus === PageStatus.Idle ||
@@ -108,7 +105,7 @@ const Read = () => {
 			) : (
 				<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 					<div className="text-4xl py-5 text-center font-bold font-sans">
-						Here is the data shared to you
+						✨ Files and text shared with you
 					</div>
 					{!!data?.textContent?.length && (
 						<div className="flex mx-auto w-1/2 flex-col">
