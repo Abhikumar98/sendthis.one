@@ -4,3 +4,12 @@ export interface DocumentData {
 	deleteDate: Date;
 	id: string;
 }
+
+export const uploadLimit = 20971520; // 20MB
+
+export enum PageStatus {
+	Loading = "LOADING",
+	Success = "SUCCESS",
+	Error = "ERROR",
+	Idle = "IDLE",
+}

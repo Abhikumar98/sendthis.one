@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { dataCollectionRef } from "../utils/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
-import { DocumentData } from "../contracts";
+import toast, { Toaster } from "react-hot-toast";
+
+import { DocumentData, uploadLimit } from "../contracts";
 
 const Upload = () => {
 	const router = useRouter();
@@ -46,15 +48,19 @@ const Upload = () => {
 				savingDocument.storageURL = String(downloadURL);
 			}
 
+			toast.loading("Uploading your data...");
+
 			await docRef.set({
 				...savingDocument,
 			});
 
 			router.push(`/code?code=${docRef.id}`);
+			toast.dismiss();
 
 			setIsUploading(true);
 		} catch (error) {
 			console.error(error);
+			toast.error(error);
 		} finally {
 			setIsText(false);
 			setTextContent("");
@@ -66,7 +72,19 @@ const Upload = () => {
 	const handleChange = (value: React.ChangeEvent<HTMLInputElement>) => {
 		const allFields = value.target.files;
 
-		setFiles([...Object.values(allFields)]);
+		const isLimitCrossed =
+			[...Object.values(allFields)]
+				.map((f) => f.size)
+				.reduce((total, current) => total + current, 0) > uploadLimit;
+
+		if (isLimitCrossed) {
+			console.log("came here");
+			toast.error("Oops, you have crossed the upload limit of 20MB");
+			return;
+		}
+
+		setFiles([...files, ...Object.values(allFields)]);
+		toast.success("File added ");
 	};
 
 	const removeFile = (index: number) => {
@@ -86,16 +104,23 @@ const Upload = () => {
 
 	console.log(files);
 
+	const currentUploadedFilesSize =
+		files
+			.map((f) => f.size)
+			.reduce((total, current) => total + current, 0) > uploadLimit;
+
+	const isButtonDisabled =
+		!(isText || isFiles) || !(textContent.length || files.length);
 	return (
 		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 			<div className="text-4xl py-5 text-center font-bold font-sans">
 				Upload files
 			</div>
-			<div className="text-xl py-5 w-3/4 font-sans flex mx-auto justify-center mb-10 text-center">
+			<div className="text-xl py-5 w-5/6 md:w-3/4 font-sans flex mx-auto justify-center mb-10 text-center">
 				Your data will be uploaded anonymously and will be deleted
 				automatically after 24 hours
 			</div>
-			<div className="flex mx-auto w-1/2 flex-col">
+			<div className="flex mx-auto w-5/6 md:w-1/2 flex-col">
 				<div>
 					<label className="inline-flex items-center">
 						<input
@@ -135,7 +160,8 @@ const Upload = () => {
 							onChange={(e) => setIsFiles(e.target.checked)}
 						/>
 						<span className="ml-2">
-							Do you have files that you want to share?
+							Do you have files that you want to share? (max. 20
+							MB)
 						</span>
 					</label>
 				</div>
@@ -169,7 +195,7 @@ const Upload = () => {
 								Object.values(files)?.map((file, index) => (
 									<div
 										key={index}
-										className=" my-1 flex items-center w-1/2 bg-blue-100 p-1 m-auto"
+										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto"
 									>
 										<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
 											{file.name
@@ -206,17 +232,17 @@ const Upload = () => {
 				)}
 
 				<div className="w-full bg-gray-200 h-0.5 mt-3 rounded-sm" />
-
 				<button
-					disabled={!(isText || isFiles)}
+					disabled={isButtonDisabled}
 					onClick={uploadDate}
 					className={`my-5 w-max mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex ${
 						isUploading ? "bg-gray-400" : ""
-					} ${isText || isFiles ? "bg-blue-500" : "bg-gray-200"}`}
+					} ${!isButtonDisabled ? "bg-blue-500" : "bg-gray-200"}`}
 				>
 					Ready to share
 				</button>
 			</div>
+			<Toaster />
 		</div>
 	);
 };

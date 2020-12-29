@@ -7,7 +7,8 @@ import DownloadFile from "downloadjs";
 import TextareaAutosize from "react-textarea-autosize";
 import filesize from "filesize";
 
-import { DocumentData } from "../contracts";
+import Image from "next/image";
+import { DocumentData, PageStatus } from "../contracts";
 
 interface FilesMetadata {
 	readonly name: string;
@@ -17,6 +18,7 @@ interface FilesMetadata {
 }
 
 const Read = () => {
+	const [pageStatus, setPageStatus] = useState<PageStatus>(PageStatus.Idle);
 	const [files, setFiles] = useState<FilesMetadata[]>([]);
 
 	const signUpAnonymously = async () => {
@@ -27,6 +29,7 @@ const Read = () => {
 	const [data, setData] = useState<DocumentData | null>(null);
 	const fetchData = async () => {
 		try {
+			setPageStatus(PageStatus.Loading);
 			const code = queryString.parseUrl(router.asPath).query;
 			if (!firebase.auth().currentUser) {
 				await signUpAnonymously();
@@ -55,7 +58,9 @@ const Read = () => {
 
 			const result = await Promise.all(promises);
 			setFiles(result);
+			setPageStatus(PageStatus.Success);
 		} catch (error) {
+			setPageStatus(PageStatus.Error);
 			console.error(error);
 		}
 	};
@@ -90,70 +95,85 @@ const Read = () => {
 		fetchData();
 	}, []);
 
+	console.log(pageStatus);
+
 	return (
-		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
-			<div className="text-4xl py-5 text-center font-bold font-sans">
-				Here is the data shared to you
-			</div>
-			{!!data?.textContent?.length && (
-				<div className="flex mx-auto w-1/2 flex-col">
-					<div className="my-4">
-						<TextareaAutosize
-							maxRows={10}
-							disabled={true}
-							value={data.textContent}
-							className="form-textarea resize-none border rounded-md w-full max-w-full"
-						/>
+		<div className="h-screen w-screen">
+			{pageStatus === PageStatus.Idle ||
+			pageStatus === PageStatus.Loading ? (
+				<img
+					className="h-60 w-80 m-auto flex mt-10"
+					src="/downloading-animation.gif"
+				/>
+			) : (
+				<div className="w-screen h-screen bg-blue-50 overflow-scroll">
+					<div className="text-4xl py-5 text-center font-bold font-sans">
+						Here is the data shared to you
 					</div>
-					<button
-						onClick={copyToClipboard}
-						className={
-							"my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex "
-						}
-					>
-						Copy text
-					</button>
-				</div>
-			)}
-			{!!files.length && (
-				<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
-					{files.map((file, index) => (
-						<div
-							key={index}
-							className=" my-1 flex items-center justify-center w-max bg-blue-100 p-1 m-auto"
-						>
-							<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
-								{file.name.split(".").slice(0, -1).join(".")}
+					{!!data?.textContent?.length && (
+						<div className="flex mx-auto w-1/2 flex-col">
+							<div className="my-4">
+								<TextareaAutosize
+									maxRows={10}
+									disabled={true}
+									value={data.textContent}
+									className="form-textarea resize-none border rounded-md w-full max-w-full"
+								/>
 							</div>
-							<div className="w-10 ml-2 rounded-sm px-1  flex items-center bg-blue-200">
-								{file.name.split(".").slice(-1)}
-							</div>
-							<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
-								{filesize(file.size)}
-							</div>
-							<div
-								className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
-								onClick={() =>
-									downloadFile(file.fullPath, index)
+							<button
+								onClick={copyToClipboard}
+								className={
+									"my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex "
 								}
 							>
-								<svg
-									className="h-4 w-4"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-									/>
-								</svg>
-							</div>
+								Copy text
+							</button>
 						</div>
-					))}
+					)}
+					{!!files.length && (
+						<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
+							{files.map((file, index) => (
+								<div
+									key={index}
+									className=" my-1 flex items-center justify-center w-max bg-blue-100 p-1 m-auto"
+								>
+									<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
+										{file.name
+											.split(".")
+											.slice(0, -1)
+											.join(".")}
+									</div>
+									<div className="w-10 ml-2 rounded-sm px-1  flex items-center bg-blue-200">
+										{file.name.split(".").slice(-1)}
+									</div>
+									<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
+										{filesize(file.size)}
+									</div>
+									<div
+										className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
+										onClick={() =>
+											downloadFile(file.fullPath, index)
+										}
+									>
+										<svg
+											className="h-4 w-4"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+											/>
+										</svg>
+									</div>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 			)}
 		</div>
