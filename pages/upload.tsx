@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { dataCollectionRef, db } from "../utils/firebase";
+import { dataCollectionRef } from "../utils/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
-import Link from "next/link";
-
-interface Document {
-	textContent?: string;
-	storageURL?: string;
-	deleteDate: Date;
-	id: string;
-}
+import { DocumentData } from "../contracts";
 
 const Upload = () => {
 	const router = useRouter();
@@ -35,7 +28,7 @@ const Upload = () => {
 			const deleteOn = new Date();
 			deleteOn.setDate(deleteOn.getDate() + 1);
 
-			const savingDocument: Document = {
+			const savingDocument: DocumentData = {
 				id: docRef.id,
 				deleteDate: deleteOn,
 			};
@@ -50,16 +43,11 @@ const Upload = () => {
 					.ref(`${docRef.id}/${files[0].name}`);
 				await firebaseStorageRef.put(files[0]);
 				const downloadURL = await firebaseStorageRef.getDownloadURL();
-
-				console.log(downloadURL);
-
 				savingDocument.storageURL = String(downloadURL);
 			}
 
-			console.log("saving this document --> ", savingDocument);
-
 			await docRef.set({
-				savingDocument,
+				...savingDocument,
 			});
 
 			router.push(`/code?code=${docRef.id}`);

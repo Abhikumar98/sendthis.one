@@ -3,15 +3,15 @@ import firebase from "firebase";
 import { db, FirebaseCollections } from "../utils/firebase";
 import { useRouter } from "next/router";
 import queryString from "query-string";
-
-interface Data {
-	text: string;
-}
+import DownloadFile from "downloadjs";
+import TextareaAutosize from "react-textarea-autosize";
+import { DocumentData } from "../contracts";
 
 interface FilesMetadata {
 	readonly name: string;
-	readonly path: string;
+	readonly fullPath: string;
 	readonly size: number;
+	readonly contentType: string;
 }
 
 const Read = () => {
@@ -22,7 +22,7 @@ const Read = () => {
 	};
 
 	const router = useRouter();
-	const [data, setData] = useState<Data | null>(null);
+	const [data, setData] = useState<DocumentData | null>(null);
 	const fetchData = async () => {
 		try {
 			const code = queryString.parseUrl(router.asPath).query;
@@ -43,7 +43,8 @@ const Read = () => {
 			if (!docSnapshot.exists) {
 				throw new Error("No such document exists");
 			}
-			setData(docSnapshot.data() as Data);
+
+			setData(docSnapshot.data() as DocumentData);
 
 			const firebaseStorageRef = firebase.storage().ref(id);
 			const allFiles = await firebaseStorageRef.listAll();
@@ -52,7 +53,6 @@ const Read = () => {
 
 			const result = await Promise.all(promises);
 			setFiles(result);
-			console.log(result);
 		} catch (error) {
 			console.error(error);
 		}
@@ -60,16 +60,36 @@ const Read = () => {
 
 	const copyToClipboard = () => {
 		const el = document.createElement("textarea");
-		el.value = data.text;
+		el.value = data.textContent;
 		document.body.appendChild(el);
 		el.select();
 		document.execCommand("copy");
 		document.body.removeChild(el);
 	};
 
-	const downloadFile = async (filePath: string) => {
+	const downloadFile = async (filePath: string, index: number) => {
 		try {
-			const downloadRef = firebase.storage().ref(filePath);
+			const downloadRef = await firebase
+				.storage()
+				.ref(filePath)
+				.getDownloadURL();
+
+			// download(downloadRef);
+
+			console.log(downloadRef);
+
+			const selectedFile = files[index];
+
+			const promiseBlobData = await fetch(downloadRef, {
+				mode: "cors",
+			});
+
+			console.log(promiseBlobData);
+
+			const blobData = await promiseBlobData.blob();
+			console.log(blobData);
+
+			DownloadFile(downloadRef, files[index].name);
 
 			// download file using downloadJs
 		} catch (error) {
@@ -86,12 +106,13 @@ const Read = () => {
 			<div className="text-4xl py-5 text-center font-bold font-sans">
 				Here is the data shared to you
 			</div>
-			{!!data?.text?.length && (
+			{!!data?.textContent?.length && (
 				<div className="flex mx-auto w-1/2 flex-col">
 					<div className="my-4">
-						<textarea
+						<TextareaAutosize
+							maxRows={10}
 							disabled={true}
-							value={data.text}
+							value={data.textContent}
 							className="form-textarea resize-none border rounded-md w-full max-w-full"
 						/>
 					</div>
@@ -123,7 +144,9 @@ const Read = () => {
 							</div>
 							<div
 								className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
-								onClick={() => downloadFile(file.path)}
+								onClick={() =>
+									downloadFile(file.fullPath, index)
+								}
 							>
 								<svg
 									className="h-4 w-4"
