@@ -53,8 +53,8 @@ const Upload = () => {
 				...savingDocument,
 			});
 
-			router.push(`/code?code=${docRef.id}`);
 			toast.dismiss();
+			router.push(`/code?code=${docRef.id}`);
 
 			setIsUploading(true);
 		} catch (error) {
@@ -117,7 +117,7 @@ const Upload = () => {
 			</div>
 			<div className="flex mx-auto w-5/6 md:w-1/2 flex-col">
 				<div>
-					<label className="inline-flex items-center">
+					<label className="inline-flex items-start mb-2">
 						<input
 							disabled={isUploading}
 							type="checkbox"
@@ -146,7 +146,7 @@ const Upload = () => {
 					</div>
 				)}
 				<div>
-					<label className="inline-flex items-center">
+					<label className="inline-flex items-start">
 						<input
 							disabled={isUploading}
 							type="checkbox"
@@ -235,7 +235,21 @@ const Upload = () => {
 						isUploading ? "bg-gray-400" : ""
 					} ${!isButtonDisabled ? "bg-blue-500" : "bg-gray-200"}`}
 				>
-					Upload ⬆
+					Upload{" "}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						className="h-6 w-6 ml-3"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+						/>
+					</svg>
 				</button>
 			</div>
 			<Toaster />

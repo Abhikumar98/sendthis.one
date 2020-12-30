@@ -10,7 +10,7 @@ const code = () => {
 	return (
 		<div className="container m-auto flex h-screen items-center justify-center flex-col font-sans">
 			<div className="text-bold text-3xl mb-10 text-center">
-				Scan this code to get the download link
+				Scan this code to get the download your files
 			</div>
 			<QRCode
 				value={

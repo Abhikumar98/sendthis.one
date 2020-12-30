@@ -105,7 +105,7 @@ const Read = () => {
 			) : (
 				<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 					<div className="text-4xl py-5 text-center font-bold font-sans">
-						✨ Files and text shared with you
+						Shared data
 					</div>
 					{!!data?.textContent?.length && (
 						<div className="flex mx-auto w-1/2 flex-col">
@@ -134,26 +134,26 @@ const Read = () => {
 									key={index}
 									className=" my-1 flex items-center justify-center w-max bg-blue-100 p-1 m-auto"
 								>
-									<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
+									<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200 w-48 md:w-auto">
 										{file.name
 											.split(".")
 											.slice(0, -1)
 											.join(".")}
 									</div>
-									<div className="w-10 ml-2 rounded-sm px-1  flex items-center bg-blue-200">
+									<div className=" ml-2 rounded-sm px-1  flex items-center bg-blue-200">
 										{file.name.split(".").slice(-1)}
 									</div>
 									<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
 										{filesize(file.size)}
 									</div>
 									<div
-										className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-200 hover:bg-blue-300 cursor-pointer"
+										className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-500 hover:bg-blue-300 cursor-pointer"
 										onClick={() =>
 											downloadFile(file.fullPath, index)
 										}
 									>
 										<svg
-											className="h-4 w-4"
+											className="h-4 w-4 bg-blue-500 text-white"
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"
