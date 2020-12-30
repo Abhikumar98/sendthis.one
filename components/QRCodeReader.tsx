@@ -16,27 +16,24 @@ const QRCodeReader = ({ getData }: { getData: (data: string) => void }) => {
 		"environment"
 	);
 
-	const options = [
-		{ value: "environment", label: "Rear Camera" },
-		{ value: "user", label: "Front Camera" },
-	];
+	const toggleCamera = () =>
+		cameraState === "environment"
+			? setCameraState("user")
+			: setCameraState("environment");
 
 	return (
 		<div className="flex justify-center items-center flex-col">
-			<Select
-				className="w-1/2 md:w-1/4 mb-10"
-				defaultValue={options[0]}
-				options={options}
-				onChange={(e) =>
-					setCameraState(e.value as "environment" | "user")
-				}
-			/>
 			<QrReader
 				delay={500}
 				onError={handleError}
 				onScan={handleScan}
 				facingMode={cameraState}
 				className="w-96"
+			/>
+			<img
+				src="/camera-switch.png"
+				onClick={toggleCamera}
+				className="cursor-pointer hover:bg-blue-100 rounded-md mt-4"
 			/>
 		</div>
 	);
