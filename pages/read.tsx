@@ -8,6 +8,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import filesize from "filesize";
 
 import { DocumentData, PageStatus } from "../contracts";
+import toast, { Toaster } from "react-hot-toast";
 
 interface FilesMetadata {
 	readonly name: string;
@@ -75,6 +76,8 @@ const Read = () => {
 
 	const downloadFile = async (filePath: string, index: number) => {
 		try {
+			toast.loading("Downloading file");
+
 			const downloadRef = await firebase
 				.storage()
 				.ref(filePath)
@@ -86,7 +89,10 @@ const Read = () => {
 
 			DownloadFile(blobData, files[index].name);
 		} catch (error) {
+			toast.error(error);
 			console.error(error);
+		} finally {
+			toast.dismiss();
 		}
 	};
 
@@ -153,7 +159,7 @@ const Read = () => {
 										}
 									>
 										<svg
-											className="h-4 w-4 bg-blue-500 text-white"
+											className="h-4 w-4 bg-blue-500 hover:bg-blue-300 text-white"
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"
@@ -173,6 +179,7 @@ const Read = () => {
 					)}
 				</div>
 			)}
+			<Toaster />
 		</div>
 	);
 };
