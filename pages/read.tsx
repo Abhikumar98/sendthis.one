@@ -114,7 +114,7 @@ const Read = () => {
 						Shared data
 					</div>
 					{!!data?.textContent?.length && (
-						<div className="flex mx-auto w-1/2 flex-col">
+						<div className="flex mx-auto  w-5/6 md:w-1/2 flex-col">
 							<div className="my-4">
 								<TextareaAutosize
 									maxRows={10}
