@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import firebase from "firebase";
-import { db, FirebaseCollections } from "../utils/firebase";
+import { db, FirebaseCollections } from "../lib/firebase";
 import { useRouter } from "next/router";
 import queryString from "query-string";
 import DownloadFile from "downloadjs";

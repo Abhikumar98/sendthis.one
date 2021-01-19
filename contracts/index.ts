@@ -3,6 +3,7 @@ export interface DocumentData {
 	storageURL?: string;
 	deleteDate: Date;
 	id: string;
+	code: string;
 }
 
 export const uploadLimit = 20971520; // 20MB

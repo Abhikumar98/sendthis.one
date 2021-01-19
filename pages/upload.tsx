@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { dataCollectionRef } from "../utils/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,49 +16,43 @@ const Upload = () => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
 
-	const signUpAnonymously = async () => {
-		await firebase.auth().signInAnonymously();
-	};
+	// const signUpAnonymously = async () => {
+	// 	await firebase.auth().signInAnonymously();
+	// };
 
 	const uploadDate = async () => {
 		try {
-			const docRef = dataCollectionRef;
 			toast.loading("Uploading your data...");
 
-			await signUpAnonymously();
+			// await signUpAnonymously();
 
 			const deleteOn = new Date();
 			deleteOn.setDate(deleteOn.getDate() + 1);
 
-			const savingDocument: DocumentData = {
-				id: docRef.id,
-				deleteDate: deleteOn,
-			};
+			const formData = new FormData();
 
-			if (isText && textContent.length) {
-				savingDocument.textContent = textContent;
-			}
-
-			if (isFiles && files.length) {
-				const firebaseStorageRef = firebase
-					.storage()
-					.ref(`${docRef.id}/${files[0].name}`);
-				await firebaseStorageRef.put(files[0]);
-				const downloadURL = await firebaseStorageRef.getDownloadURL();
-				savingDocument.storageURL = String(downloadURL);
-			}
-
-			await docRef.set({
-				...savingDocument,
+			formData.append("textContent", textContent);
+			formData.append("deleteDate", deleteOn.toISOString());
+			files.forEach((file) => {
+				formData.append(file.name, file);
 			});
 
+			const code = fetch("/api/upload", {
+				method: "POST",
+				body: formData,
+			})
+				.then((data) => data.json())
+				.catch((err) => {
+					throw new Error(err);
+				});
+
 			toast.dismiss();
-			router.push(`/code?code=${docRef.id}`);
+			router.push(`/code?code=${code}`);
 
 			setIsUploading(true);
 		} catch (error) {
 			console.error(error);
-			toast.error(error);
+			typeof error === "string" && toast.error(error);
 		} finally {
 			setIsText(false);
 			setTextContent("");
@@ -244,9 +237,9 @@ const Upload = () => {
 						className="h-6 w-6 ml-3"
 					>
 						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
 							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
 						/>
 					</svg>
