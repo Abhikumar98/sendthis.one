@@ -16,10 +16,7 @@ const firebaseConfig = {
 console.log(firebase.apps.length);
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig);
-} else {
-	firebase.app();
 }
-
 export const db = firebase.firestore();
 
 export enum FirebaseCollections {
@@ -29,3 +26,5 @@ export enum FirebaseCollections {
 export const dataCollectionRef = db
 	.collection(`${FirebaseCollections.Data}`)
 	.doc();
+
+export default firebase;

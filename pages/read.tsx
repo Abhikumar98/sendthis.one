@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import firebase from "firebase";
 import { useRouter } from "next/router";
 import queryString from "query-string";
 import DownloadFile from "downloadjs";
@@ -8,6 +7,8 @@ import filesize from "filesize";
 
 import { DocumentData, PageStatus } from "../contracts";
 import toast, { Toaster } from "react-hot-toast";
+import firebase from "../lib/firebase";
+import OtpInput from "react-otp-input";
 
 interface FilesMetadata {
 	readonly name: string;
@@ -20,6 +21,11 @@ const Read = () => {
 	const [pageStatus, setPageStatus] = useState<PageStatus>(PageStatus.Idle);
 	const [files, setFiles] = useState<FilesMetadata[]>([]);
 	const [requiresPassword, setRequiresPassword] = useState<boolean>(false);
+	const [password, setPassword] = useState<string>("");
+	const [isIncorrectPassword, setIsIncorrectPassword] = useState<boolean>(
+		false
+	);
+	const [checkingPassword, setCheckingPassword] = useState<boolean>(false);
 
 	const signUpAnonymously = async () => {
 		await firebase.auth().signInAnonymously();
@@ -95,14 +101,100 @@ const Read = () => {
 		}
 	};
 
+	const checkPassword = async () => {
+		try {
+			setCheckingPassword(true);
+			const code = queryString.parseUrl(router.asPath).query;
+			const queryCode = code["code"] as string;
+			const data = await fetch(
+				`/api/password?code=${queryCode}&password=${password}`
+			);
+			const parsedData = await data.json();
+
+			if (parsedData.message === "incorrect_password") {
+				setIsIncorrectPassword(true);
+			} else {
+				setIsIncorrectPassword(false);
+				setData(parsedData as DocumentData);
+				const firebaseStorageRef = firebase
+					.storage()
+					.ref(parsedData.id);
+				const allFiles = await firebaseStorageRef.listAll();
+
+				const promises = allFiles.items.map((file) =>
+					file.getMetadata()
+				);
+
+				const result = await Promise.all(promises);
+				setFiles(result);
+				setPageStatus(PageStatus.Success);
+				setRequiresPassword(false);
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setCheckingPassword(false);
+		}
+	};
+
 	useEffect(() => {
 		fetchData();
 	}, []);
 
 	return (
 		<div className="h-screen w-screen">
-			{pageStatus === PageStatus.Idle ||
-			pageStatus === PageStatus.Loading ? (
+			{requiresPassword ? (
+				<div className="h-1/3 w-3/4 mt-40 m-auto flex items-center justify-around rounded-md flex-col">
+					The contents here are password protected
+					{isIncorrectPassword ? (
+						<div>Incorrect password</div>
+					) : (
+						<div />
+					)}
+					<OtpInput
+						value={password}
+						onChange={(e) => {
+							setPassword(e);
+							setIsIncorrectPassword(false);
+						}}
+						numInputs={6}
+						separator={<span></span>}
+						isInputSecure={true}
+						isDisabled={checkingPassword}
+						hasErrored={isIncorrectPassword}
+						errorStyle={{
+							border: "1px solid red",
+							color: "red",
+						}}
+						inputStyle={{
+							height: "4rem",
+							width: "3rem",
+							marginRight: "1rem",
+							fontSize: "2rem",
+							border: "1px solid",
+							borderRadius: "5px",
+						}}
+					/>
+					<div className="flex">
+						<button
+							class="border border-blue-500 outline-blue-500 text-blue-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+							onClick={() => {
+								setPassword("");
+								setIsIncorrectPassword(false);
+							}}
+						>
+							Clear
+						</button>
+						<button
+							class="border border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+							onClick={checkPassword}
+						>
+							Submit
+						</button>
+					</div>
+				</div>
+			) : pageStatus === PageStatus.Idle ||
+			  pageStatus === PageStatus.Loading ? (
 				<img
 					className="h-60 w-80 m-auto flex mt-10"
 					src="/downloading-animation.gif"
