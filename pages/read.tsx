@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import firebase from "firebase";
-import { db, FirebaseCollections } from "../lib/firebase";
 import { useRouter } from "next/router";
 import queryString from "query-string";
 import DownloadFile from "downloadjs";
@@ -20,6 +19,7 @@ interface FilesMetadata {
 const Read = () => {
 	const [pageStatus, setPageStatus] = useState<PageStatus>(PageStatus.Idle);
 	const [files, setFiles] = useState<FilesMetadata[]>([]);
+	const [requiresPassword, setRequiresPassword] = useState<boolean>(false);
 
 	const signUpAnonymously = async () => {
 		await firebase.auth().signInAnonymously();
@@ -38,20 +38,19 @@ const Read = () => {
 				throw new Error("Invalid doc id");
 			}
 
-			const id = code["code"] as string;
+			const queryCode = code["code"] as string;
 
-			const docSnapshot = await db
-				.collection(FirebaseCollections.Data)
-				.doc(id)
-				.get();
+			const data = await fetch(`/api/read?code=${queryCode}`);
+			const parsedData = (await data.json()) as Partial<DocumentData>;
 
-			if (!docSnapshot.exists) {
-				throw new Error("No such document exists");
+			if (parsedData.isPasswordProtected) {
+				setRequiresPassword(true);
+			} else {
+				setData(parsedData as DocumentData);
+				setRequiresPassword(false);
 			}
 
-			setData(docSnapshot.data() as DocumentData);
-
-			const firebaseStorageRef = firebase.storage().ref(id);
+			const firebaseStorageRef = firebase.storage().ref(parsedData.id);
 			const allFiles = await firebaseStorageRef.listAll();
 
 			const promises = allFiles.items.map((file) => file.getMetadata());

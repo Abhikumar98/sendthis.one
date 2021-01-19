@@ -1,20 +1,15 @@
-import { firebase, FirebaseCollections } from "./../../lib/firebase";
+import { firebase, FirebaseCollections, storage } from "../../lib/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import { DocumentData } from "../../contracts";
 import { nanoid } from "nanoid";
+import { uuid } from "uuidv4";
 
 export const config = {
 	api: {
 		bodyParser: false,
 	},
 };
-
-interface DocumentDataRequest {
-	readonly textContent?: string;
-	readonly storageURL?: string;
-	readonly deleteDate: Date;
-}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
@@ -32,39 +27,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				id: docRef.id,
 				deleteDate: deleteOn,
 				code: code,
+				isPasswordProtected: false, // fields.isPasswordProtected
 			};
 
 			if (fields.textContent) {
 				savingDocument.textContent = String(fields.textContent);
 			}
 
-			console.log("in progress ", savingDocument, files.length);
-
-			// if (files) {
-			// 	if (Array.isArray(files)) {
-			// 		console.log("coming here");
-			// 		const uploadFiles = files.map(async (file) => {
-			// 			const firebaseStorageRef = firebase
-			// 				.storage()
-			// 				.ref(`${docRef.id}/${files.name}`);
-			// 			await firebaseStorageRef.put(file);
-			// 		});
-
-			// 		await Promise.all(uploadFiles);
-			// 	} else {
-			// 		console.log("coming there");
-			// 		const firebaseStorageRef = storage.ref(
-			// 			`${docRef.id}/${files.name}`
-			// 		);
-			// 		await firebaseStorageRef.put(files as any);
-			// 	}
-			// }
+			if (files) {
+				Object.keys(files).map(async (fileKey) => {
+					const file = files[fileKey] as any;
+					const token = uuid();
+					console.log(token);
+					await storage.upload(file.path, {
+						destination: `${docRef.id}/${file.name}`,
+						metadata: {
+							firebaseStorageDownloadTokens: token,
+						},
+					});
+				});
+			}
 
 			await docRef.set({
 				...savingDocument,
 			});
-
-			console.log("all done ---> ", savingDocument);
 
 			return res.status(200).json({ code });
 		});

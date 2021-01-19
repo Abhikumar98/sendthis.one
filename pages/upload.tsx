@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { dataCollectionRef } from "../lib/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
@@ -16,15 +17,9 @@ const Upload = () => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
 
-	// const signUpAnonymously = async () => {
-	// 	await firebase.auth().signInAnonymously();
-	// };
-
 	const uploadDate = async () => {
 		try {
 			toast.loading("Uploading your data...");
-
-			// await signUpAnonymously();
 
 			const deleteOn = new Date();
 			deleteOn.setDate(deleteOn.getDate() + 1);
@@ -37,22 +32,19 @@ const Upload = () => {
 				formData.append(file.name, file);
 			});
 
-			const code = fetch("/api/upload", {
+			const code = await fetch("/api/upload", {
 				method: "POST",
 				body: formData,
-			})
-				.then((data) => data.json())
-				.catch((err) => {
-					throw new Error(err);
-				});
+			});
+			const resolvedCode = await code.json();
 
 			toast.dismiss();
-			router.push(`/code?code=${code}`);
+			router.push(`/code?code=${resolvedCode.code}`);
 
 			setIsUploading(true);
 		} catch (error) {
 			console.error(error);
-			typeof error === "string" && toast.error(error);
+			toast.error(error);
 		} finally {
 			setIsText(false);
 			setTextContent("");
@@ -85,12 +77,6 @@ const Upload = () => {
 
 		setFiles([...newObj]);
 	};
-
-	useEffect(() => {
-		return () => {
-			firebase.auth().signOut();
-		};
-	}, []);
 
 	const currentUploadedFilesSize =
 		files
