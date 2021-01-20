@@ -19,6 +19,10 @@ const code = () => {
 						: "invalid"
 				}
 			/>
+
+			<div className="my-6">
+				or receiver can type in this code <b>{code["code"]}</b>
+			</div>
 		</div>
 	);
 };

@@ -10,7 +10,6 @@ const Scan = () => {
 	const router = useRouter();
 
 	const handleDataValidation = (value: string) => {
-		//
 		if (value) {
 			router.push(value);
 		}

@@ -1,7 +1,7 @@
 {
-  "semi": true,
-  "bracketSpacing": true,
-  "useTabs": true,
-  "tabWidth": 4,
-  "jsxSingleQuote": false
+	"semi": true,
+	"bracketSpacing": true,
+	"useTabs": true,
+	"tabWidth": 4,
+	"jsxSingleQuote": false
 }

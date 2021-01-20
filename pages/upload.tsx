@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { dataCollectionRef } from "../utils/firebase";
+import { dataCollectionRef } from "../lib/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
+import OtpInput from "react-otp-input";
 
 import { DocumentData, uploadLimit } from "../contracts";
 
@@ -16,54 +17,48 @@ const Upload = () => {
 
 	const [isUploading, setIsUploading] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
-
-	const signUpAnonymously = async () => {
-		await firebase.auth().signInAnonymously();
-	};
+	const [requiredPassword, setRequirePassword] = useState<boolean>(false);
+	const [password, setPassword] = useState<string>("");
 
 	const uploadDate = async () => {
 		try {
-			const docRef = dataCollectionRef;
-			toast.loading("Uploading your data...");
+			if (password.length !== 6 && requiredPassword) {
+				toast.error("Please enter a 6 character password");
+				return;
+			}
 
-			await signUpAnonymously();
+			setIsUploading(true);
+			toast.loading("Uploading your data...");
 
 			const deleteOn = new Date();
 			deleteOn.setDate(deleteOn.getDate() + 1);
 
-			const savingDocument: DocumentData = {
-				id: docRef.id,
-				deleteDate: deleteOn,
-			};
+			const formData = new FormData();
 
-			if (isText && textContent.length) {
-				savingDocument.textContent = textContent;
-			}
+			formData.append("textContent", textContent);
+			formData.append("isPasswordProtected", String(requiredPassword));
+			formData.append("password", password);
+			formData.append("deleteDate", deleteOn.toISOString());
 
-			if (isFiles && files.length) {
-				const firebaseStorageRef = firebase
-					.storage()
-					.ref(`${docRef.id}/${files[0].name}`);
-				await firebaseStorageRef.put(files[0]);
-				const downloadURL = await firebaseStorageRef.getDownloadURL();
-				savingDocument.storageURL = String(downloadURL);
-			}
-
-			await docRef.set({
-				...savingDocument,
+			files.forEach((file) => {
+				formData.append(file.name, file);
 			});
 
-			toast.dismiss();
-			router.push(`/code?code=${docRef.id}`);
+			const code = await fetch("/api/upload", {
+				method: "POST",
+				body: formData,
+			});
+			const resolvedCode = await code.json();
 
-			setIsUploading(true);
+			toast.dismiss();
+			router.push(`/code?code=${resolvedCode.code}`);
+			setIsText(false);
+			setTextContent("");
+			setIsFiles(false);
 		} catch (error) {
 			console.error(error);
 			toast.error(error);
 		} finally {
-			setIsText(false);
-			setTextContent("");
-			setIsFiles(false);
 			setIsUploading(false);
 		}
 	};
@@ -93,19 +88,16 @@ const Upload = () => {
 		setFiles([...newObj]);
 	};
 
-	useEffect(() => {
-		return () => {
-			firebase.auth().signOut();
-		};
-	}, []);
-
 	const currentUploadedFilesSize =
 		files
 			.map((f) => f.size)
 			.reduce((total, current) => total + current, 0) > uploadLimit;
 
 	const isButtonDisabled =
-		!(isText || isFiles) || !(textContent.length || files.length);
+		!(isText || isFiles) ||
+		!(textContent.length || files.length) ||
+		(password.length !== 6 && requiredPassword);
+	console.log(requiredPassword);
 	return (
 		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 			<div className="text-4xl py-5 text-center font-bold font-sans">
@@ -191,7 +183,7 @@ const Upload = () => {
 								Object.values(files)?.map((file, index) => (
 									<div
 										key={index}
-										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto"
+										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto upload-files"
 									>
 										<div className=" overflow-hidden px-1 w-56 sm:w-auto whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
 											{file.name
@@ -227,6 +219,57 @@ const Upload = () => {
 					</>
 				)}
 
+				<div className="my-6">
+					Require password:{" "}
+					<div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in ml-6">
+						<input
+							type="checkbox"
+							name="toggle"
+							id="toggle"
+							checked={requiredPassword}
+							onChange={(e) => {
+								if (!e.target.checked) {
+									setPassword("");
+								}
+								setRequirePassword(e.target.checked);
+							}}
+							className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"
+						/>
+						<label
+							htmlFor="toggle"
+							className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+						></label>
+					</div>
+				</div>
+
+				{requiredPassword && (
+					<div className="my-6">
+						<OtpInput
+							value={password}
+							onChange={(e) => {
+								setPassword(e);
+							}}
+							className="m-auto"
+							shouldAutoFocus={true}
+							numInputs={6}
+							isDisabled={isUploading}
+							inputStyle={{
+								height: "4rem",
+								width: "3rem",
+								marginRight: "1rem",
+								fontSize: "2rem",
+								border: "1px solid",
+								borderRadius: "5px",
+							}}
+							disabledStyle={{
+								border: "1px solid #8e8e8e",
+								color: "#8e8e8e",
+								backgroundColor: "#dedede",
+							}}
+						/>
+					</div>
+				)}
+
 				<div className="w-full bg-gray-200 h-0.5 mt-3 rounded-sm" />
 				<button
 					disabled={isButtonDisabled}
@@ -244,9 +287,9 @@ const Upload = () => {
 						className="h-6 w-6 ml-3"
 					>
 						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
 							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
 						/>
 					</svg>

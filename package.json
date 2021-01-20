@@ -8,13 +8,19 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"@types/body-parser": "^1.19.0",
 		"@types/downloadjs": "^1.4.2",
+		"@types/formidable": "^1.0.32",
 		"@types/react-qr-reader": "^2.1.3",
 		"@types/react-select": "^3.0.27",
 		"autoprefixer": "^10.0.4",
+		"body-parser": "^1.19.0",
 		"downloadjs": "^1.4.7",
 		"filesize": "^6.1.0",
 		"firebase": "^8.1.2",
+		"firebase-admin": "^9.4.2",
+		"formidable": "^1.2.2",
+		"nanoid": "^3.1.20",
 		"next": "10.0.3",
 		"postcss": "^8.1.14",
 		"qrcode.react": "^1.0.0",
@@ -22,10 +28,12 @@
 		"react": "17.0.1",
 		"react-dom": "17.0.1",
 		"react-hot-toast": "^1.0.1",
+		"react-otp-input": "^2.3.0",
 		"react-qr-reader": "^2.2.1",
 		"react-select": "^3.1.1",
 		"react-textarea-autosize": "^8.3.0",
-		"tailwindcss": "^2.0.1"
+		"tailwindcss": "^2.0.1",
+		"uuidv4": "^6.2.6"
 	},
 	"devDependencies": {
 		"@tailwindcss/custom-forms": "^0.2.1",
