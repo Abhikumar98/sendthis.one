@@ -17,6 +17,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		form.parse(req, async (err, fields, files) => {
 			if (err) throw new Error(err);
 			const deleteOn = new Date(String(fields.deleteDate));
+			const requirePassword = !!fields.isPasswordProtected ?? false;
+			const password = fields.password ?? false;
 
 			const docRef = firebase
 				.collection(`${FirebaseCollections.Data}`)
@@ -27,7 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				id: docRef.id,
 				deleteDate: deleteOn,
 				code: code,
-				isPasswordProtected: false, // fields.isPasswordProtected
+				isPasswordProtected: requirePassword,
+				password: String(password),
 			};
 
 			if (fields.textContent) {

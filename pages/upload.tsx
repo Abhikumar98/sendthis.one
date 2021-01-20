@@ -3,6 +3,7 @@ import { dataCollectionRef } from "../lib/firebase";
 import firebase from "firebase";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
+import OtpInput from "react-otp-input";
 
 import { DocumentData, uploadLimit } from "../contracts";
 
@@ -16,9 +17,17 @@ const Upload = () => {
 
 	const [isUploading, setIsUploading] = useState(false);
 	const [files, setFiles] = useState<File[]>([]);
+	const [requiredPassword, setRequirePassword] = useState<boolean>(false);
+	const [password, setPassword] = useState<string>("");
 
 	const uploadDate = async () => {
 		try {
+			if (password.length !== 6) {
+				toast.error("Please enter a 6 character password");
+				return;
+			}
+
+			setIsUploading(true);
 			toast.loading("Uploading your data...");
 
 			const deleteOn = new Date();
@@ -27,7 +36,10 @@ const Upload = () => {
 			const formData = new FormData();
 
 			formData.append("textContent", textContent);
+			formData.append("isPasswordProtected", String(requiredPassword));
+			formData.append("password", password);
 			formData.append("deleteDate", deleteOn.toISOString());
+
 			files.forEach((file) => {
 				formData.append(file.name, file);
 			});
@@ -40,15 +52,13 @@ const Upload = () => {
 
 			toast.dismiss();
 			router.push(`/code?code=${resolvedCode.code}`);
-
-			setIsUploading(true);
+			setIsText(false);
+			setTextContent("");
+			setIsFiles(false);
 		} catch (error) {
 			console.error(error);
 			toast.error(error);
 		} finally {
-			setIsText(false);
-			setTextContent("");
-			setIsFiles(false);
 			setIsUploading(false);
 		}
 	};
@@ -85,6 +95,7 @@ const Upload = () => {
 
 	const isButtonDisabled =
 		!(isText || isFiles) || !(textContent.length || files.length);
+	console.log(requiredPassword);
 	return (
 		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 			<div className="text-4xl py-5 text-center font-bold font-sans">
@@ -204,6 +215,57 @@ const Upload = () => {
 								))}
 						</div>
 					</>
+				)}
+
+				<div className="my-6">
+					Require password:{" "}
+					<div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in ml-6">
+						<input
+							type="checkbox"
+							name="toggle"
+							id="toggle"
+							checked={requiredPassword}
+							onChange={(e) => {
+								if (!e.target.checked) {
+									setPassword("");
+								}
+								setRequirePassword(e.target.checked);
+							}}
+							className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"
+						/>
+						<label
+							htmlFor="toggle"
+							className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+						></label>
+					</div>
+				</div>
+
+				{requiredPassword && (
+					<div className="my-6">
+						<OtpInput
+							value={password}
+							onChange={(e) => {
+								setPassword(e);
+							}}
+							className="m-auto"
+							shouldAutoFocus={true}
+							numInputs={6}
+							isDisabled={isUploading}
+							inputStyle={{
+								height: "4rem",
+								width: "3rem",
+								marginRight: "1rem",
+								fontSize: "2rem",
+								border: "1px solid",
+								borderRadius: "5px",
+							}}
+							disabledStyle={{
+								border: "1px solid #8e8e8e",
+								color: "#8e8e8e",
+								backgroundColor: "#dedede",
+							}}
+						/>
+					</div>
 				)}
 
 				<div className="w-full bg-gray-200 h-0.5 mt-3 rounded-sm" />
