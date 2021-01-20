@@ -39,3 +39,12 @@ a {
 	@apply: bg-green-400;
 	background-color: dodgerblue;
 }
+
+.download-files {
+	display: grid;
+	grid-template-columns: 1fr 3rem 6rem 2rem;
+}
+.upload-files {
+	display: grid;
+	grid-template-columns: 1fr 3rem 2rem;
+}

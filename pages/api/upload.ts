@@ -2,8 +2,9 @@ import { firebase, FirebaseCollections, storage } from "../../lib/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import { DocumentData } from "../../contracts";
-import { nanoid } from "nanoid";
+import { customAlphabet, nanoid } from "nanoid";
 import { uuid } from "uuidv4";
+import bodyParser from "body-parser";
 
 export const config = {
 	api: {
@@ -17,14 +18,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		form.parse(req, async (err, fields, files) => {
 			if (err) throw new Error(err);
 			const deleteOn = new Date(String(fields.deleteDate));
-			const requirePassword = !!fields.isPasswordProtected ?? false;
+			const requirePassword =
+				fields.isPasswordProtected === "true" ? true : false;
 			const password = fields.password ?? false;
 
 			const docRef = firebase
 				.collection(`${FirebaseCollections.Data}`)
 				.doc();
 
-			const code = nanoid(6);
+			const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			const generateCode = customAlphabet(alphabet, 6);
+
+			const code = generateCode();
+
 			const savingDocument: DocumentData = {
 				id: docRef.id,
 				deleteDate: deleteOn,

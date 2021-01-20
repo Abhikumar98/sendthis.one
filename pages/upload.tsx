@@ -22,7 +22,7 @@ const Upload = () => {
 
 	const uploadDate = async () => {
 		try {
-			if (password.length !== 6) {
+			if (password.length !== 6 && requiredPassword) {
 				toast.error("Please enter a 6 character password");
 				return;
 			}
@@ -94,7 +94,9 @@ const Upload = () => {
 			.reduce((total, current) => total + current, 0) > uploadLimit;
 
 	const isButtonDisabled =
-		!(isText || isFiles) || !(textContent.length || files.length);
+		!(isText || isFiles) ||
+		!(textContent.length || files.length) ||
+		(password.length !== 6 && requiredPassword);
 	console.log(requiredPassword);
 	return (
 		<div className="w-screen h-screen bg-blue-50 overflow-scroll">
@@ -181,7 +183,7 @@ const Upload = () => {
 								Object.values(files)?.map((file, index) => (
 									<div
 										key={index}
-										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto"
+										className=" my-1 flex items-center max-w-5/6 md:w-4/5 bg-blue-100 p-1 m-auto upload-files"
 									>
 										<div className=" overflow-hidden px-1 w-56 sm:w-auto whitespace-pre overflow-ellipsis rounded-sm bg-blue-200">
 											{file.name
