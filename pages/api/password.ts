@@ -13,8 +13,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const data = document.docs[0].data() as DocumentData;
 
+		const { password: p, ...response } = data;
+
 		if (data.password === password) {
-			return res.status(200).json({ ...data });
+			return res.status(200).json({ ...response });
 		} else {
 			return res.status(200).json({ message: "incorrect_password" });
 		}

@@ -104,6 +104,7 @@ const Read = () => {
 	const checkPassword = async () => {
 		try {
 			setCheckingPassword(true);
+			setIsIncorrectPassword(false);
 			const code = queryString.parseUrl(router.asPath).query;
 			const queryCode = code["code"] as string;
 			const data = await fetch(
@@ -157,6 +158,7 @@ const Read = () => {
 							setPassword(e);
 							setIsIncorrectPassword(false);
 						}}
+						shouldAutoFocus={true}
 						numInputs={6}
 						separator={<span></span>}
 						isInputSecure={true}
@@ -174,20 +176,27 @@ const Read = () => {
 							border: "1px solid",
 							borderRadius: "5px",
 						}}
+						disabledStyle={{
+							border: "1px solid #8e8e8e",
+							color: "#8e8e8e",
+							backgroundColor: "#dedede",
+						}}
 					/>
 					<div className="flex">
 						<button
-							class="border border-blue-500 outline-blue-500 text-blue-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+							className="border border-blue-500 outline-blue-500 text-blue-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
 							onClick={() => {
 								setPassword("");
 								setIsIncorrectPassword(false);
 							}}
+							disabled={checkingPassword}
 						>
 							Clear
 						</button>
 						<button
-							class="border border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+							className="border border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
 							onClick={checkPassword}
+							disabled={checkingPassword}
 						>
 							Submit
 						</button>
