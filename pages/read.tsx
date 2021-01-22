@@ -9,6 +9,128 @@ import { DocumentData, PageStatus } from "../contracts";
 import toast, { Toaster } from "react-hot-toast";
 import firebase from "../lib/firebase";
 import OtpInput from "react-otp-input";
+import Button from "../components/Button";
+
+import styled from "styled-components";
+
+const Loader = styled.div`
+	display: flex;
+	margin: auto;
+	justify-content: center;
+	margin-top: 5rem;
+	position: relative;
+	width: min-content;
+
+	.loader {
+		border-radius: 6px;
+		margin-right: 1rem;
+		height: 1rem;
+		width: 2rem;
+		background: var(--light-bg);
+		height: 6rem;
+		width: 6rem;
+		border-radius: 50%;
+		border: 0.5rem solid var(--light-bg);
+		border-top-color: unset;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0.5rem;
+			left: 0;
+			right: 0.25rem;
+			height: 5rem;
+			width: 5rem;
+			border-radius: 50%;
+			box-shadow: var(--box-shadow-inset);
+			border-top: 1px solid;
+		}
+
+		&::after {
+			content: "";
+		}
+	}
+
+	.shadow {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 6rem;
+		width: 6rem;
+		border-radius: 50%;
+		box-shadow: 3px 3px 4px 0px #bababa, -3px -4px 4px white;
+	}
+	transform-origin: center center;
+
+	.loader-1 {
+		animation: loader-1 1200ms infinite ease-in-out;
+	}
+	// .loader-2 {
+	// 	animation: loader-2 1200ms infinite;
+	// }
+	// .loader-3 {
+	// 	animation: loader-3 1200ms infinite;
+	// }
+	// .loader-4 {
+	// 	animation: loader-4 1200ms infinite;
+	// }
+
+	@keyframes loader-1 {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	// @keyframes loader-1 {
+	// 	0%,
+	// 	25%,
+	// 	100% {
+	// 		height: 1rem;
+	// 	}
+
+	// 	12.5% {
+	// 		height: 5rem;
+	// 	}
+	// }
+	// @keyframes loader-2 {
+	// 	0%,
+	// 	12.5%,
+	// 	37.5%,
+	// 	100% {
+	// 		height: 1rem;
+	// 	}
+
+	// 	25% {
+	// 		height: 5rem;
+	// 	}
+	// }
+	// @keyframes loader-3 {
+	// 	0%,
+	// 	37.5%,
+	// 	62.5%,
+	// 	100% {
+	// 		height: 1rem;
+	// 	}
+
+	// 	50% {
+	// 		height: 5rem;
+	// 	}
+	// }
+	// @keyframes loader-4 {
+	// 	0%,
+	// 	62.5%,
+	// 	87.5%,
+	// 	100% {
+	// 		height: 1rem;
+	// 	}
+
+	// 	75% {
+	// 		height: 5rem;
+	// 	}
+	// }
+`;
 
 interface FilesMetadata {
 	readonly name: string;
@@ -172,10 +294,11 @@ const Read = () => {
 							height: "4rem",
 							width: "3rem",
 							marginRight: "1rem",
-							fontSize: "2rem",
-							border: "1px solid",
-							borderRadius: "5px",
+							fontSize: "1.8rem",
+							borderRadius: "6px",
+							border: "3px solid var(--light-bg)",
 						}}
+						className="w-12 mr-4 neumorphism-component"
 						disabledStyle={{
 							border: "1px solid #8e8e8e",
 							color: "#8e8e8e",
@@ -183,8 +306,8 @@ const Read = () => {
 						}}
 					/>
 					<div className="flex">
-						<button
-							className="border border-blue-500 outline-blue-500 text-blue-500 rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+						<Button
+							className="mr-4"
 							onClick={() => {
 								setPassword("");
 								setIsIncorrectPassword(false);
@@ -192,22 +315,23 @@ const Read = () => {
 							disabled={checkingPassword}
 						>
 							Clear
-						</button>
-						<button
-							className="border border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+						</Button>
+						<Button
 							onClick={checkPassword}
 							disabled={checkingPassword}
 						>
 							Submit
-						</button>
+						</Button>
 					</div>
 				</div>
 			) : pageStatus === PageStatus.Idle ||
 			  pageStatus === PageStatus.Loading ? (
-				<img
-					className="h-60 w-80 m-auto flex mt-10"
-					src="/downloading-animation.gif"
-				/>
+				<Loader>
+					<div className="loader loader-1" />
+					<div className="shadow" />
+					{/* <div className="loader loader-3" />
+					<div className="loader loader-4" /> */}
+				</Loader>
 			) : (
 				<div className="w-screen h-screen bg-blue-50 overflow-scroll">
 					<div className="text-4xl py-5 text-center font-bold font-sans">

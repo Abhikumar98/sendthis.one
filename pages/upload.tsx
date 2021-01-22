@@ -285,13 +285,13 @@ const Upload = () => {
 				</div>
 
 				{requiredPassword && (
-					<div className="my-6">
+					<div className="my-6 mx-auto">
 						<OtpInput
 							value={password}
 							onChange={(e) => {
 								setPassword(e);
 							}}
-							className="m-auto"
+							className="w-12 mr-4 neumorphism-component"
 							shouldAutoFocus={true}
 							numInputs={6}
 							isDisabled={isUploading}
@@ -299,9 +299,9 @@ const Upload = () => {
 								height: "4rem",
 								width: "3rem",
 								marginRight: "1rem",
-								fontSize: "2rem",
-								border: "1px solid",
-								borderRadius: "5px",
+								fontSize: "1.8rem",
+								borderRadius: "6px",
+								border: "3px solid var(--light-bg)",
 							}}
 							disabledStyle={{
 								border: "1px solid #8e8e8e",
