@@ -8,6 +8,7 @@ import OtpInput from "react-otp-input";
 import { DocumentData, uploadLimit } from "../contracts";
 import Button from "../components/Button";
 import NeumorphismWrapper from "../components/NeumorphismWrapper";
+import Radio from "../components/Radio";
 
 const Upload = () => {
 	const router = useRouter();
@@ -117,7 +118,7 @@ const Upload = () => {
 					onClick={() => setIsText(true)}
 				>
 					<div className="flex justify-between items-center">
-						Do you have text content that you want to share?{" "}
+						Click here to upload text content
 						{isText && (
 							<Button
 								onClick={(e) => {
@@ -166,7 +167,7 @@ const Upload = () => {
 					onClick={() => setIsFiles(true)}
 				>
 					<div className="flex justify-between items-center">
-						Do you have text content that you want to share?{" "}
+						Click here to upload files
 						{isFiles && (
 							<Button
 								onClick={(e) => {
@@ -269,27 +270,18 @@ const Upload = () => {
 					)}
 				</div>
 
-				<div className="my-6">
+				<div className="my-6 flex">
 					Require password:{" "}
-					<div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in ml-6">
-						<input
-							type="checkbox"
-							name="toggle"
-							id="toggle"
-							checked={requiredPassword}
-							onChange={(e) => {
-								if (!e.target.checked) {
-									setPassword("");
-								}
-								setRequirePassword(e.target.checked);
-							}}
-							className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer outline-none"
-						/>
-						<label
-							htmlFor="toggle"
-							className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
-						></label>
-					</div>
+					<Radio
+						className="ml-4"
+						value={requiredPassword}
+						onChange={(value) => {
+							setRequirePassword(value);
+							if (!value) {
+								setPassword("");
+							}
+						}}
+					/>
 				</div>
 
 				{requiredPassword && (

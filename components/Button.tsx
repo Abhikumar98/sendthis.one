@@ -9,13 +9,13 @@ interface Props {
 	readonly type?: ButtonType;
 	readonly children?: ReactNode;
 	readonly icon?: ReactNode;
-	readonly onClick: (e?: any) => void;
+	readonly onClick?: (e?: any) => void;
 	readonly className?: string;
 	readonly rounded?: boolean;
 }
 
 const ButtonWrapper = styled.button<Props>`
-	background: #eaeaea;
+	background: var(--light-bg);
 	padding: ${(props) => (props.rounded ? "0.5rem" : "0.25rem 1rem")};
 	width: max-content;
 	border-radius: ${(props) => (props.rounded ? "50%" : "6px")};
@@ -50,10 +50,16 @@ const ButtonWrapper = styled.button<Props>`
 		transition: all 100ms ease-in-out;
 	}
 
+	&:hover {
+		&::before {
+			box-shadow: var(--box-shadow-hover);
+		}
+	}
+
 	${(props) =>
 		props.disabled
 			? ""
-			: `&:hover {
+			: `&:active {
 		&::before {
 			box-shadow: none;
 			opacity: 0;

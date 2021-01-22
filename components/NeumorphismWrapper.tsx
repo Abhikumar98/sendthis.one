@@ -26,8 +26,8 @@ const Wrapper = styled.div<Props>`
 		bottom: 0;
 		left: 0;
 		right: 0;
-		box-shadow: 3px 3px 4px 0px #bababa, -3px -4px 4px white;
-		transition: all 200ms ease-in-out;
+		box-shadow: var(--box-shadow);
+		transition: all 100ms ease-in-out;
 		pointer-events: none;
 	}
 
@@ -48,15 +48,14 @@ const Wrapper = styled.div<Props>`
 	${(props) =>
 		props.disabled
 			? ""
-			: `&:hover {
+			: `&:active {
 		&::before {
 			box-shadow: none;
 			opacity: 0;
 		}
 		&::after {
 			opacity: 1;
-			box-shadow: inset 3px 3px 4px 0px #bababa,
-				inset -3px -3px 4px #f9f9f9;
+			box-shadow: var(--box-shadow-inset)
 		}
 	}`}
 	&:focus {

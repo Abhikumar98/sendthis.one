@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 const Home = () => {
 	const router = useRouter();
@@ -29,29 +31,23 @@ const Home = () => {
 		<div className="w-screen h-screen ">
 			<div className="flex mt-10 items-center justify-center ">
 				<Link href="/upload">
-					<button className="bg-blue-500 rounded-lg font-bold text-white text-center px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6">
-						Share
-					</button>
+					<Button>Share</Button>
 				</Link>
+				<div className="mx-4">or</div>
 				<Link href="/scan">
-					<button className="bg-yellow-500 rounded-lg font-bold text-white text-center px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6">
-						Scan
-					</button>
+					<Button>Scan</Button>
 				</Link>
 			</div>
 			<div className="flex mt-10 items-center justify-center ">
-				<input
-					className="rounded-l-lg p-1 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white uppercase"
-					placeholder="CODE"
+				<Input
+					className="uppercase"
+					placeholder="6-digit code"
 					onChange={(e) => setCode(e.target.value)}
 					value={code}
 				/>
-				<button
-					onClick={handleSubmit}
-					className="px-2 rounded-r-lg bg-yellow-400  text-gray-800 font-bold p-1 uppercase border-yellow-500 border-t border-b border-r"
-				>
+				<Button onClick={handleSubmit} className="ml-4">
 					Submit
-				</button>
+				</Button>
 			</div>
 			<Toaster />
 		</div>
