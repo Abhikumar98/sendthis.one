@@ -333,7 +333,7 @@ const Read = () => {
 					<div className="loader loader-4" /> */}
 				</Loader>
 			) : (
-				<div className="w-screen h-screen bg-blue-50 overflow-scroll">
+				<div className="w-screen h-screen overflow-scroll">
 					<div className="text-4xl py-5 text-center font-bold font-sans">
 						Shared data
 					</div>
@@ -347,14 +347,12 @@ const Read = () => {
 									className="form-textarea resize-none border rounded-md w-full max-w-full"
 								/>
 							</div>
-							<button
+							<Button
 								onClick={copyToClipboard}
-								className={
-									"my-5 bg-blue-500 mx-auto py-2 px-4 rounded-sm text-white focus:ring-1 flex "
-								}
+								className="mx-auto"
 							>
 								Copy text
-							</button>
+							</Button>
 						</div>
 					)}
 					{!!files.length && (
