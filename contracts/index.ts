@@ -6,6 +6,7 @@ export interface DocumentData {
 	code: string;
 	isPasswordProtected: boolean;
 	password?: string;
+	fileNames?: string[];
 }
 
 export const uploadLimit = 20971520; // 20MB

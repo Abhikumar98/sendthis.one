@@ -2,7 +2,10 @@ import { firebase, FirebaseCollections } from "../../lib/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import { DocumentData } from "../../contracts";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+	req: NextApiRequest,
+	res: NextApiResponse
+): Promise<any> => {
 	try {
 		const { code } = req.query;
 

@@ -43,9 +43,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				savingDocument.textContent = String(fields.textContent);
 			}
 
+			const fileNames: string[] = [];
+
 			if (files) {
 				Object.keys(files).map(async (fileKey) => {
 					const file = files[fileKey] as any;
+					fileNames.push(file.name);
 					const token = uuid();
 					console.log(token);
 					await storage.upload(file.path, {
@@ -55,6 +58,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 						},
 					});
 				});
+			}
+
+			if (fileNames.length) {
+				savingDocument.fileNames = fileNames;
 			}
 
 			await docRef.set({
