@@ -34,7 +34,7 @@ const Upload = () => {
 			toast.loading("Uploading your data...");
 
 			const deleteOn = new Date();
-			deleteOn.setDate(deleteOn.getDate() + 1);
+			deleteOn.setHours(deleteOn.getHours() + 1);
 
 			const formData = new FormData();
 
