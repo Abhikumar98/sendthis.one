@@ -266,7 +266,8 @@ const Read = () => {
 
 	if (
 		pageStatus !== PageStatus.Loading &&
-		(!data || !Object.keys(data).length)
+		(!data || !Object.keys(data).length) &&
+		!requiresPassword
 	) {
 		return (
 			<div className="h-full w-full flex flex-col justify-center items-center">
