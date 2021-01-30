@@ -1,6 +1,11 @@
+import { NextApiRequest } from "next";
+import { NextApiResponse } from "next";
 import { firebase, FirebaseCollections, storage } from "../../lib/server";
 
-export default async (): Promise<any> => {
+export default async (
+	_req: NextApiRequest,
+	res: NextApiResponse
+): Promise<any> => {
 	try {
 		console.log("starting --->");
 
@@ -16,7 +21,10 @@ export default async (): Promise<any> => {
 
 				const isPastDate = date <= new Date();
 
+				console.log("in document -> ", doc.id);
+
 				if (isPastDate) {
+					console.log("deleting -> ", doc.id);
 					await firebase
 						.collection(FirebaseCollections.Data)
 						.doc(doc.id)
@@ -31,7 +39,7 @@ export default async (): Promise<any> => {
 			}
 		});
 
-		console.log("finished stuff");
+		return res.status(200);
 	} catch (error) {
 		console.error(error);
 	}
