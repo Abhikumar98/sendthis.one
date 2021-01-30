@@ -50,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 					const file = files[fileKey] as any;
 					fileNames.push(file.name);
 					const token = uuid();
-					console.log(token);
+
 					await storage.upload(file.path, {
 						destination: `${docRef.id}/${file.name}`,
 						metadata: {

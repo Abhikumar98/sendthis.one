@@ -13,7 +13,7 @@ const firebaseConfig = {
 	measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
 // Initialize Firebase
-console.log(firebase.apps.length);
+
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig);
 }

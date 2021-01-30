@@ -9,10 +9,16 @@ export default async (
 	try {
 		const { code } = req.query;
 
+		console.log("coming here ---> ", code);
+
 		const document = await firebase
 			.collection(FirebaseCollections.Data)
 			.where("code", "==", code)
 			.get();
+
+		if (document.empty) {
+			return res.status(404).json({});
+		}
 
 		const data = document.docs[0].data() as DocumentData;
 

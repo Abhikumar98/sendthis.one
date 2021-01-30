@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -72,9 +72,11 @@ const InputWrapper = styled.div<Props>`
 `;
 
 const Input: React.FC<Props> = (props) => {
+	const ref = useRef<HTMLInputElement>();
+
 	return (
-		<InputWrapper {...props}>
-			<input {...props} />
+		<InputWrapper {...props} onClick={() => ref.current.focus()}>
+			<input {...props} ref={ref} />
 		</InputWrapper>
 	);
 };

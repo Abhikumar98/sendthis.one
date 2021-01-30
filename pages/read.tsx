@@ -264,6 +264,30 @@ const Read = () => {
 		fetchData();
 	}, []);
 
+	if (
+		pageStatus !== PageStatus.Loading &&
+		(!data || !Object.keys(data).length)
+	) {
+		return (
+			<div className="h-full w-full flex flex-col justify-center items-center">
+				<svg
+					className="h-20 w-20"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 20 20"
+					fill="currentColor"
+				>
+					<path
+						fillRule="evenodd"
+						d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+						clipRule="evenodd"
+					/>
+				</svg>
+				<div className="font-bold m-5">
+					The data you are looking for doesn&apos;t exist anymore.
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="h-screen w-screen">
 			{requiresPassword ? (

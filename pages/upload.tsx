@@ -100,7 +100,7 @@ const Upload = () => {
 		!(isText || isFiles) ||
 		!(textContent.length || files.length) ||
 		(password.length !== 6 && requiredPassword);
-	console.log(isText);
+
 	return (
 		<div className="w-screen h-screen bg-gray-100 overflow-scroll">
 			<div className="text-4xl py-5 text-center font-bold font-sans">
