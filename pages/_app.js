@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }) {
 		<>
 			<Head></Head>
 			<div className="bg-bgColor text-textSecondaryColor h-screen w-screen overflow-auto font-sans">
-				<div className="flex flex-col items-center">
+				<div className="flex flex-col w-full h-full items-center">
 					<Component {...pageProps} />
 				</div>
 			</div>

@@ -113,7 +113,7 @@ const Upload = () => {
 				Your data will be uploaded anonymously and will be deleted automatically
 				after 24 hours
 			</Paragraph>
-			<div className="grid grid-cols-2 gap-4 w-full justify-between">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-5/6 sm:w-4/5 mx-auto md:w-full justify-between ">
 				<div className={" rounded-lg p-2 pb-0 z-0"}>
 					<div className="flex justify-between items-center my-5">
 						<div className="relative flex items-start">
@@ -264,7 +264,7 @@ const Upload = () => {
 				</div>
 			</div>
 			<div className="flex justify-center flex-col items-start">
-				<div className="my-6 flex">
+				<div className="my-6 flex w-5/6 sm:w-4/5 mx-auto md:w-full">
 					Require password:{" "}
 					<Switch
 						className="ml-4"
@@ -279,11 +279,11 @@ const Upload = () => {
 				</div>
 
 				{requiredPassword && (
-					<div className="mb-6 ml-2">
+					<div className="mb-6 mx-auto md:mx-0 md:ml-2">
 						<OtpInput
 							value={password}
 							onChange={(e: React.SetStateAction<string>) => setPassword(e)}
-							className="w-12 mr-4"
+							className="w-8 sm:w-12 mr-4"
 							shouldAutoFocus={true}
 							numInputs={6}
 							isDisabled={isUploading}

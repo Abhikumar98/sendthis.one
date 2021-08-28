@@ -350,7 +350,7 @@ const Read = () => {
 					<div
 						className={`grid ${
 							!!data?.textContent && !!files.length
-								? "grid-cols-2"
+								? "grid-cols-1 md:grid-cols-2"
 								: "grid-cols-auto"
 						} gap-4 w-full`}
 					>
@@ -400,12 +400,15 @@ const Read = () => {
 								</label>
 							</div>
 							{!!files.length && (
-								<div className="flex flex-col justify-center w-full overflow-y-auto">
-									<ul role="list" className="divide-gray-200 h-80">
+								<div className="flex flex-col justify-center w-full">
+									<ul
+										role="list"
+										className="divide-gray-200 h-80 my-4 overflow-y-auto"
+									>
 										{files?.map((file, index) => (
 											<li
 												key={index}
-												className="px-4 my-4 sm:px-0 flex items-center justify-between border border-gray-300 rounded-lg"
+												className="px-4 mb-4 sm:px-0 flex items-center justify-between border border-gray-300 rounded-lg"
 											>
 												<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm w-48 md:w-auto">
 													{file.name}

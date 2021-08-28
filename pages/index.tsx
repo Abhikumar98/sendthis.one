@@ -34,17 +34,15 @@ const Home = () => {
 		<>
 			<Heading>Sendthis.one</Heading>
 			<Paragraph>Share files and text anonymously.</Paragraph>
-			<div className="flex mt-10 items-center justify-center ">
+			<div className="flex flex-col sm:flex-row mt-10 items-center justify-center ">
 				<Link href="/upload">
-					<div className="h-80 w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
-						<div className="text-4xl text-center font-semibold p-4">
-							Upload
-						</div>
+					<div className=" h-40 w-56 sm:h-40 sm:w-40 md:h-56 md:w-56 lg:h-80 lg:w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
+						<div className="text-4xl text-center font-semibold p-4">Upload</div>
 					</div>
 				</Link>
-				<div className="mx-4">or</div>
+				<div className="mx-4 text-xl">or</div>
 				<Link href="/scan">
-					<div className="h-80 w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
+					<div className=" h-40 w-56 sm:h-40 sm:w-40 md:h-56 md:w-56 lg:h-80 lg:w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
 						<div className="text-4xl text-center font-semibold p-4">
 							Scan & Download
 						</div>
@@ -52,7 +50,8 @@ const Home = () => {
 				</Link>
 			</div>
 			<div className="text-center my-8">
-				Or if you have the unique code for downloading files, <br />
+				Unique code for downloading files? <br />
+				Smack it in the box below
 			</div>
 			<form onSubmit={handleFormSubmit}>
 				<div className="flex items-center">
@@ -63,8 +62,7 @@ const Home = () => {
 						className="w-36 shadow-sm focus:border-primaryColor block sm:text-sm border-gray-300 rounded-md focus:ring-primaryColor uppercase"
 						placeholder="6-digit code"
 						onChange={(e) =>
-							e.target.value.length <= 6 &&
-							setCode(e.target.value)
+							e.target.value.length <= 6 && setCode(e.target.value)
 						}
 						value={code}
 					/>
