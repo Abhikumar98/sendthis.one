@@ -1,11 +1,25 @@
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import QRCode from "qrcode.react";
 import queryString from "query-string";
+import dynamic from "next/dynamic";
+import copy from "copy-to-clipboard";
+import toast from "react-hot-toast";
+
+const ReactTooltip = dynamic(() => import("react-tooltip"), {
+	ssr: false,
+});
 
 const code = () => {
 	const router = useRouter();
 
 	const code = queryString.parseUrl(router.asPath).query;
+
+	const copyToClipboard = () => {
+		copy(String(code["code"]) ?? "");
+		console.log("here");
+		toast.success("Copied to clipboard");
+	};
 
 	return (
 		<div className="container m-auto flex h-screen items-center justify-center flex-col font-sans">
@@ -21,7 +35,14 @@ const code = () => {
 			/>
 
 			<div className="my-6">
-				or receiver can type in this code <b>{code["code"]}</b>
+				Unique code to access files:
+				<span
+					onClick={copyToClipboard}
+					className="ml-4 font-bold text-xl"
+					data-tip={"Click to copy"}
+				>
+					{code["code"]}
+				</span>
 			</div>
 		</div>
 	);

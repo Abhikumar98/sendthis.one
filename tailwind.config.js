@@ -9,10 +9,22 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily,
+			colors: {
+				textPrimaryColor: "#272343",
+				textSecondaryColor: "#2d334a",
+				bgColor: "#fffffe",
+				buttonColor: "#ffd803",
+				buttonTextColor: "#272343",
+				primaryColor: "#ffd803",
+				secondaryColor: "#e3f6f5",
+			},
 		},
 	},
 	variants: {
 		extend: {},
 	},
-	plugins: [require("@tailwindcss/custom-forms")],
+	plugins: [
+		require("@tailwindcss/custom-forms"),
+		require("@tailwindcss/forms"),
+	],
 };

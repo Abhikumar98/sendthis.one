@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEventHandler, useEffect, useState } from "react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
-import Button from "../components/Button";
 import Input from "../components/Input";
+import Button from "../components/Button";
+import Heading from "../components/Text/Heading";
+import Paragraph from "../components/Text/Paragraph";
 
 const Home = () => {
 	const router = useRouter();
 
 	const [code, setCode] = useState<string>("");
 
-	const handleSubmit = () => {
+	const handleFormSubmit = (e?: { preventDefault: () => void }) => {
+		e?.preventDefault();
 		if (code.length !== 6) {
 			toast.error("Invalid code");
 			return;
@@ -28,61 +31,54 @@ const Home = () => {
 	}, []);
 
 	return (
-		<div className="w-screen h-screen ">
-			<div className="text m-4 sm:m-6 md:mx-20 md:my-8">
-				<div>Hey there ! 👋 </div>
-				<div>
-					Looking to share data without sharing your personal
-					information ?
-				</div>
-				<div className="font-semibold my-2">
-					{" "}
-					Well you came to the right place ✨
-				</div>
-				<div>
-					With <b>ShareWithMe</b> you can share your data let it be
-					any file or text with anyone without sharing any personal
-					contact information ! 💯 anonymous
-				</div>
-				<div>
-					You don&apos;t have to share it with us as well.
-					<ul className="my-4">
-						<li>↪ Upload</li>
-						<li>↪ Set a password ( optional )</li>
-						<li>↪ Get the qr code and unique code</li>
-						<li>↪ Share </li>
-					</ul>
-					and done !
-				</div>
-				<div>
-					Also, we won't keep your data forever either. Set a time
-					after which you want to delete your data and *swish* its
-					gone
-				</div>
-			</div>
-
+		<>
+			<Heading>Sendthis.one</Heading>
+			<Paragraph>Share files and text anonymously.</Paragraph>
 			<div className="flex mt-10 items-center justify-center ">
 				<Link href="/upload">
-					<Button>Share</Button>
+					<div className="h-80 w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
+						<div className="text-4xl text-center font-semibold p-4">
+							Upload
+						</div>
+					</div>
 				</Link>
 				<div className="mx-4">or</div>
 				<Link href="/scan">
-					<Button>Scan</Button>
+					<div className="h-80 w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">
+						<div className="text-4xl text-center font-semibold p-4">
+							Scan & Download
+						</div>
+					</div>
 				</Link>
 			</div>
-			<div className="flex mt-10 items-center justify-center ">
-				<Input
-					className="uppercase"
-					placeholder="6-digit code"
-					onChange={(e) => setCode(e.target.value)}
-					value={code}
-				/>
-				<Button onClick={handleSubmit} className="ml-4">
-					Submit
-				</Button>
+			<div className="text-center my-8">
+				Or if you have the unique code for downloading files, <br />
 			</div>
+			<form onSubmit={handleFormSubmit}>
+				<div className="flex items-center">
+					<input
+						type="text"
+						name="email"
+						id="email"
+						className="w-36 shadow-sm focus:border-primaryColor block sm:text-sm border-gray-300 rounded-md focus:ring-primaryColor uppercase"
+						placeholder="6-digit code"
+						onChange={(e) =>
+							e.target.value.length <= 6 &&
+							setCode(e.target.value)
+						}
+						value={code}
+					/>
+					<Button
+						onClick={handleFormSubmit}
+						disabled={code.length !== 6}
+						className="ml-6"
+					>
+						Submit
+					</Button>
+				</div>
+			</form>
 			<Toaster />
-		</div>
+		</>
 	);
 };
 

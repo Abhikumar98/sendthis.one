@@ -9,6 +9,9 @@ import { DocumentData, uploadLimit } from "../contracts";
 import Button from "../components/Button";
 import NeumorphismWrapper from "../components/NeumorphismWrapper";
 import Radio from "../components/Radio";
+import Heading from "../components/Text/Heading";
+import Paragraph from "../components/Text/Paragraph";
+import Switch from "../components/Switch";
 
 const Upload = () => {
 	const router = useRouter();
@@ -69,6 +72,9 @@ const Upload = () => {
 	const handleChange = (value: React.ChangeEvent<HTMLInputElement>) => {
 		const allFields = value.target.files;
 
+		if (!allFields) {
+			return;
+		}
 		const isLimitCrossed =
 			[...Object.values(allFields)]
 				.map((f) => f.size)
@@ -92,9 +98,8 @@ const Upload = () => {
 	};
 
 	const currentUploadedFilesSize =
-		files
-			.map((f) => f.size)
-			.reduce((total, current) => total + current, 0) > uploadLimit;
+		files.map((f) => f.size).reduce((total, current) => total + current, 0) >
+		uploadLimit;
 
 	const isButtonDisabled =
 		!(isText || isFiles) ||
@@ -102,179 +107,168 @@ const Upload = () => {
 		(password.length !== 6 && requiredPassword);
 
 	return (
-		<div className="w-screen h-screen bg-gray-100 overflow-scroll">
-			<div className="text-4xl py-5 text-center font-bold font-sans">
-				Upload files
-			</div>
-			<div className="text-xl py-5 w-5/6 md:w-3/4 font-sans flex mx-auto justify-center mb-10 text-center">
-				Your data will be uploaded anonymously and will be deleted
-				automatically after 24 hours
-			</div>
-			<div className="flex mx-auto w-5/6 md:w-1/2 flex-col">
-				<div
-					className={`neumorphism-component cursor-pointer p-2 ${
-						!isText ? "disable-neumorphism" : " pb-0 z-0"
-					}`}
-					onClick={() => setIsText(true)}
-				>
-					<div className="flex justify-between items-center">
-						Click here to upload text content
-						{isText && (
-							<Button
-								onClick={(e) => {
-									setIsText(false);
-									setTextContent("");
-									e.stopPropagation();
-								}}
-								rounded={true}
-								className="p-1"
-								icon={
-									<svg
-										className="h-4 w-4 rounded-full"
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-									>
-										<g data-name="Layer 2">
-											<g data-name="close">
-												<rect
-													width="24"
-													height="24"
-													transform="rotate(180 12 12)"
-													opacity="0"
-												/>
-												<path d="M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z" />
-											</g>
-										</g>
-									</svg>
-								}
-							/>
-						)}
+		<div className="overflow-scroll">
+			<Heading>Upload files</Heading>
+			<Paragraph className="w-5/6 md:w-3/4 flex mx-auto justify-center mb-10 text-center">
+				Your data will be uploaded anonymously and will be deleted automatically
+				after 24 hours
+			</Paragraph>
+			<div className="grid grid-cols-2 gap-4 w-full justify-between">
+				<div className={" rounded-lg p-2 pb-0 z-0"}>
+					<div className="flex justify-between items-center my-5">
+						<div className="relative flex items-start">
+							<div className="flex items-center h-5">
+								<input
+									checked={isText}
+									onChange={(e) => setIsText(e.target.checked)}
+									id="text"
+									aria-describedby="comments-description"
+									name="text"
+									type="checkbox"
+									className="h-4 w-4 text-textPrimaryColor border-gray-300 rounded outline-none"
+								/>
+							</div>
+							<div className="ml-3 text-sm">
+								<label
+									htmlFor="text"
+									className="font-medium text-textPrimaryColor cursor-pointer underline"
+								>
+									Upload text
+								</label>
+							</div>
+						</div>
 					</div>
-					{isText && (
+					<div className="mt-1 sm:mt-0 sm:col-span-2">
 						<textarea
-							disabled={isUploading}
+							id="about"
+							name="about"
+							rows={3}
+							className={`max-w-lg shadow-sm block w-full  sm:text-sm border border-gray-300 rounded-md ${
+								isText ? "" : "opacity-50"
+							} `}
+							defaultValue={""}
+							disabled={isUploading || !isText}
 							value={textContent}
 							onChange={(e) => setTextContent(e.target.value)}
-							className="form-textarea resize-y rounded-md w-full max-w-full z-10 mt-2"
 							onClick={(e) => e.stopPropagation()}
 						/>
-					)}
+					</div>
 				</div>
-				<div
-					className={`neumorphism-component cursor-pointer p-2 mt-4 ${
-						!isFiles ? "disable-neumorphism" : "z-0"
-					}`}
-					onClick={() => setIsFiles(true)}
-				>
-					<div className="flex justify-between items-center">
-						Click here to upload files
-						{isFiles && (
-							<Button
-								onClick={(e) => {
-									setIsFiles(false);
-									setFiles([]);
-									e.stopPropagation();
-								}}
-								rounded={true}
-								className="p-1"
-								icon={
-									<svg
-										className="h-4 w-4 rounded-full"
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-									>
-										<g data-name="Layer 2">
-											<g data-name="close">
-												<rect
-													width="24"
-													height="24"
-													transform="rotate(180 12 12)"
-													opacity="0"
-												/>
-												<path d="M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z" />
-											</g>
-										</g>
-									</svg>
-								}
-							/>
+				<div className={"rounded-lg p-2  "}>
+					<div className="flex justify-between items-center my-5">
+						<div className="relative flex items-start">
+							<div className="flex items-center h-5">
+								<input
+									checked={isFiles}
+									onChange={(e) => setIsFiles(e.target.checked)}
+									id="files"
+									aria-describedby="comments-description"
+									name="files"
+									type="checkbox"
+									className="h-4 w-4 text-textPrimaryColor border-gray-300 rounded focus:outline-none"
+								/>
+							</div>
+							<div className="ml-3 text-sm">
+								<label
+									htmlFor="files"
+									className="font-medium text-textPrimaryColor cursor-pointer underline"
+								>
+									Upload files
+								</label>
+							</div>
+						</div>
+					</div>
+					<div
+						className={`mx-auto my-4 ${
+							isFiles ? "" : "opacity-50 cursor-not-allowed pointer-events-none"
+						}`}
+					>
+						<div className="flex w-full mx-auto items-center justify-center">
+							<label className="w-full flex flex-col items-center px-4 py-6 bg-gray-100 hover:bg-gray-200 uppercase rounded-md">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="h-6 w-6"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+									/>
+								</svg>
+								<span className="mt-2 text-base leading-normal">
+									Select a file
+								</span>
+								<input
+									type="file"
+									multiple
+									onChange={handleChange}
+									hidden
+									size={uploadLimit}
+								/>
+							</label>
+						</div>
+					</div>
+
+					<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
+						<span>
+							{isFiles && (
+								<>
+									{Object.values(files).length} file
+									{Object.values(files).length > 1 ? "s" : ""} selected
+								</>
+							)}
+							&nbsp;
+						</span>
+						{isFiles && files && (
+							<>
+								{!!Object.values(files).length && (
+									<ul role="list" className="divide-y divide-gray-200 h-40">
+										{Object.values(files)?.map((file, index) => (
+											<li
+												key={index}
+												className="px-4 py-4 sm:px-0 flex items-center justify-between"
+											>
+												<div className="overflow-hidden px-1 sm:w-auto whitespace-pre overflow-ellipsis rounded-sm bg-white">
+													{file.name}
+												</div>
+												<div
+													className="bg-white cursor-pointer  border border-gray-300 rounded-md flex items-center"
+													onClick={() => removeFile(index)}
+												>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 24 24"
+														stroke="currentColor"
+														className="h-6 w-6"
+													>
+														<path
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="2"
+															d="M6 18L18 6M6 6l12 12"
+														/>
+													</svg>
+												</div>
+											</li>
+										))}
+									</ul>
+								)}
+							</>
 						)}
 					</div>
-					{isFiles && (
-						<>
-							<NeumorphismWrapper className="mx-auto my-4">
-								<div className="flex w-max mx-auto items-center justify-center">
-									<label className="w-64 flex flex-col items-center px-4 py-6 bg-gray-100 uppercase rounded-md">
-										<svg
-											className="w-8"
-											fill="currentColor"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 20 20"
-										>
-											<path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
-										</svg>
-										<span className="mt-2 text-base leading-normal">
-											Select a file
-										</span>
-										<input
-											type="file"
-											multiple
-											onChange={handleChange}
-											hidden
-											size={uploadLimit}
-										/>
-									</label>
-								</div>
-							</NeumorphismWrapper>
-
-							<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
-								{files &&
-									Object.values(files)?.map((file, index) => (
-										<div
-											key={index}
-											className=" my-1 flex items-center max-w-5/6 md:w-4/5 p-1 m-auto upload-files border border-gray-300 rounded-sm"
-										>
-											<div className=" overflow-hidden px-1 w-56 sm:w-auto whitespace-pre overflow-ellipsis rounded-sm bg-white">
-												{file.name
-													.split(".")
-													.slice(0, -1)
-													.join(".")}
-											</div>
-											<div className="w-10 ml-2 rounded-sm px-1  flex items-center bg-white">
-												{file.name.split(".").slice(-1)}
-											</div>
-											<NeumorphismWrapper
-												className="w-min ml-2 rounded-sm p-1 flex items-center bg-white cursor-pointer"
-												onClick={() =>
-													removeFile(index)
-												}
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-													stroke="currentColor"
-													className="h-4 w-4"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth="2"
-														d="M6 18L18 6M6 6l12 12"
-													/>
-												</svg>
-											</NeumorphismWrapper>
-										</div>
-									))}
-							</div>
-						</>
-					)}
 				</div>
-
+			</div>
+			<div className="flex justify-center flex-col items-start">
 				<div className="my-6 flex">
 					Require password:{" "}
-					<Radio
+					<Switch
 						className="ml-4"
-						value={requiredPassword}
+						enabled={requiredPassword}
 						onChange={(value) => {
 							setRequirePassword(value);
 							if (!value) {
@@ -285,17 +279,17 @@ const Upload = () => {
 				</div>
 
 				{requiredPassword && (
-					<div className="my-6 mx-auto">
+					<div className="mb-6 ml-2">
 						<OtpInput
 							value={password}
-							onChange={(e) => {
-								setPassword(e);
-							}}
-							className="w-12 mr-4 neumorphism-component"
+							onChange={(e: React.SetStateAction<string>) => setPassword(e)}
+							className="w-12 mr-4"
 							shouldAutoFocus={true}
 							numInputs={6}
 							isDisabled={isUploading}
 							inputStyle={{
+								outline: "none",
+								outlineOffset: "0",
 								height: "4rem",
 								width: "3rem",
 								marginRight: "1rem",
@@ -311,12 +305,13 @@ const Upload = () => {
 						/>
 					</div>
 				)}
+			</div>
 
-				<div className="w-full bg-gray-200 h-0.5 mt-3 rounded-sm" />
+			<div className="w-full bg-gray-200 h-0.5 mt-3 rounded-sm" />
+			<div className="flex justify-center">
 				<Button
 					className="my-5 mx-auto"
 					disabled={isButtonDisabled}
-					loading={isUploading}
 					onClick={uploadDate}
 				>
 					Upload

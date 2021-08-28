@@ -10,8 +10,10 @@ import toast, { Toaster } from "react-hot-toast";
 import firebase from "../lib/firebase";
 import OtpInput from "react-otp-input";
 import Button from "../components/Button";
-
+import copy from "copy-to-clipboard";
 import styled from "styled-components";
+import Heading from "../components/Text/Heading";
+import Paragraph from "../components/Text/Paragraph";
 
 const Loader = styled.div`
 	display: flex;
@@ -144,9 +146,8 @@ const Read = () => {
 	const [files, setFiles] = useState<FilesMetadata[]>([]);
 	const [requiresPassword, setRequiresPassword] = useState<boolean>(false);
 	const [password, setPassword] = useState<string>("");
-	const [isIncorrectPassword, setIsIncorrectPassword] = useState<boolean>(
-		false
-	);
+	const [isIncorrectPassword, setIsIncorrectPassword] =
+		useState<boolean>(false);
 	const [checkingPassword, setCheckingPassword] = useState<boolean>(false);
 
 	const signUpAnonymously = async () => {
@@ -193,12 +194,8 @@ const Read = () => {
 	};
 
 	const copyToClipboard = () => {
-		const el = document.createElement("textarea");
-		el.value = data.textContent;
-		document.body.appendChild(el);
-		el.select();
-		document.execCommand("copy");
-		document.body.removeChild(el);
+		copy(data?.textContent ?? "");
+		toast.success("Copied to clipboard");
 	};
 
 	const downloadFile = async (filePath: string, index: number) => {
@@ -239,14 +236,10 @@ const Read = () => {
 			} else {
 				setIsIncorrectPassword(false);
 				setData(parsedData as DocumentData);
-				const firebaseStorageRef = firebase
-					.storage()
-					.ref(parsedData.id);
+				const firebaseStorageRef = firebase.storage().ref(parsedData.id);
 				const allFiles = await firebaseStorageRef.listAll();
 
-				const promises = allFiles.items.map((file) =>
-					file.getMetadata()
-				);
+				const promises = allFiles.items.map((file) => file.getMetadata());
 
 				const result = await Promise.all(promises);
 				setFiles(result);
@@ -290,18 +283,14 @@ const Read = () => {
 		);
 	}
 	return (
-		<div className="h-screen w-screen">
+		<>
 			{requiresPassword ? (
 				<div className="h-1/3 w-3/4 mt-40 m-auto flex items-center justify-around rounded-md flex-col">
 					The contents here are password protected
-					{isIncorrectPassword ? (
-						<div>Incorrect password</div>
-					) : (
-						<div />
-					)}
+					{isIncorrectPassword ? <div>Incorrect password</div> : <div />}
 					<OtpInput
 						value={password}
-						onChange={(e) => {
+						onChange={(e: React.SetStateAction<string>) => {
 							setPassword(e);
 							setIsIncorrectPassword(false);
 						}}
@@ -323,7 +312,7 @@ const Read = () => {
 							borderRadius: "6px",
 							border: "3px solid var(--light-bg)",
 						}}
-						className="w-12 mr-4 neumorphism-component"
+						className="w-12 mr-4"
 						disabledStyle={{
 							border: "1px solid #8e8e8e",
 							color: "#8e8e8e",
@@ -341,10 +330,7 @@ const Read = () => {
 						>
 							Clear
 						</Button>
-						<Button
-							onClick={checkPassword}
-							disabled={checkingPassword}
-						>
+						<Button onClick={checkPassword} disabled={checkingPassword}>
 							Submit
 						</Button>
 					</div>
@@ -358,76 +344,107 @@ const Read = () => {
 					<div className="loader loader-4" /> */}
 				</Loader>
 			) : (
-				<div className="w-screen h-screen overflow-scroll">
-					<div className="text-4xl py-5 text-center font-bold font-sans">
-						Shared data
-					</div>
-					{!!data?.textContent?.length && (
-						<div className="flex mx-auto  w-5/6 md:w-1/2 flex-col">
-							<div className="my-4">
-								<TextareaAutosize
-									maxRows={10}
-									disabled={true}
-									value={data.textContent}
-									className="form-textarea resize-none border rounded-md w-full max-w-full"
-								/>
-							</div>
-							<Button
-								onClick={copyToClipboard}
-								className="mx-auto"
-							>
-								Copy text
-							</Button>
-						</div>
-					)}
-					{!!files.length && (
-						<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
-							{files.map((file, index) => (
-								<div
-									key={index}
-									className=" my-1 flex items-center justify-center w-max bg-blue-100 p-1 m-auto"
-								>
-									<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm bg-blue-200 w-48 md:w-auto">
-										{file.name
-											.split(".")
-											.slice(0, -1)
-											.join(".")}
-									</div>
-									<div className=" ml-2 rounded-sm px-1  flex items-center bg-blue-200">
-										{file.name.split(".").slice(-1)}
-									</div>
-									<div className="w-max ml-2 rounded-sm px-1  flex items-center bg-blue-200">
-										{filesize(file.size)}
-									</div>
-									<div
-										className="w-min ml-2 rounded-sm p-1 flex items-center bg-blue-500 hover:bg-blue-300 cursor-pointer"
-										onClick={() =>
-											downloadFile(file.fullPath, index)
-										}
+				<div>
+					<Heading>Shared data</Heading>
+					<Paragraph></Paragraph>
+					<div
+						className={`grid ${
+							!!data?.textContent && !!files.length
+								? "grid-cols-2"
+								: "grid-cols-auto"
+						} gap-4 w-full`}
+					>
+						{!!data?.textContent?.length && (
+							<div className="">
+								<div className="mb-4 text-sm">
+									<label
+										htmlFor="text"
+										className="font-medium text-textPrimaryColor cursor-pointer underline"
 									>
-										<svg
-											className="h-4 w-4 bg-blue-500 hover:bg-blue-300 text-white"
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-											/>
-										</svg>
-									</div>
+										Text
+									</label>
 								</div>
-							))}
+								<div className="">
+									<textarea
+										id="about"
+										name="about"
+										rows={3}
+										className={`shadow-sm block w-full  sm:text-sm border border-gray-300 rounded-md`}
+										disabled={true}
+										value={data.textContent}
+										// defaultValue={""}
+										// disabled={isUploading || !isText}
+										// value={textContent}
+										// onChange={(e) => setTextContent(e.target.value)}
+										// onClick={(e) => e.stopPropagation()}
+									/>
+									{/* <TextareaAutosize
+										maxRows={10}
+										disabled={true}
+										value={data.textContent}
+										className="resize-none border border-gray-300 rounded-md w-full max-w-full"
+									/> */}
+								</div>
+								<Button onClick={copyToClipboard} className="mx-auto my-4">
+									Copy text
+								</Button>
+							</div>
+						)}
+						<div className="">
+							<div className="text-sm">
+								<label
+									htmlFor="text"
+									className="font-medium text-textPrimaryColor cursor-pointer underline"
+								>
+									Download files
+								</label>
+							</div>
+							{!!files.length && (
+								<div className="flex flex-col justify-center w-full overflow-y-auto">
+									<ul role="list" className="divide-gray-200 h-80">
+										{files?.map((file, index) => (
+											<li
+												key={index}
+												className="px-4 my-4 sm:px-0 flex items-center justify-between border border-gray-300 rounded-lg"
+											>
+												<div className=" overflow-hidden px-1 whitespace-pre overflow-ellipsis rounded-sm w-48 md:w-auto">
+													{file.name}
+												</div>
+												<div className="flex items-center">
+													<div className="w-max ml-2 rounded-sm px-1  flex items-center">
+														{filesize(file.size)}
+													</div>
+													<div
+														className="w-min m-1 rounded-lg p-1 flex items-center bg-gray-100 hover:bg-gray-200 cursor-pointer"
+														onClick={() => downloadFile(file.fullPath, index)}
+													>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															className="h-6 w-6"
+															fill="none"
+															viewBox="0 0 24 24"
+															stroke="currentColor"
+														>
+															<path
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+																d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+															/>
+														</svg>
+													</div>
+												</div>
+											</li>
+										))}
+									</ul>
+								</div>
+							)}
 						</div>
-					)}
+					</div>
 				</div>
 			)}
 			<Toaster />
-		</div>
+		</>
 	);
 };
 
