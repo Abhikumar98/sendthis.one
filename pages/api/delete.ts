@@ -32,7 +32,7 @@ export default async (
 							deleted: true,
 						});
 
-					doc.fileNames?.forEach(async (data) => {
+					doc.fileNames?.forEach(async (data: string) => {
 						await storage.file(`${doc.id}/${data}`).delete();
 					});
 				}

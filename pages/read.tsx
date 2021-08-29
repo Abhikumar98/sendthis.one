@@ -214,7 +214,11 @@ const Read = () => {
 
 			DownloadFile(blobData, files[index].name);
 		} catch (error) {
-			toast.error(error);
+			toast.error(
+				typeof (error as any)?.message === "string"
+					? (error as any).message
+					: "Something went wrong while downloading the file"
+			);
 			console.error(error);
 		} finally {
 			toast.dismiss();

@@ -66,7 +66,11 @@ const Upload = () => {
 			setIsFiles(false);
 		} catch (error) {
 			console.error(error);
-			toast.error(error);
+			toast.error(
+				typeof (error as any)?.message === "string"
+					? (error as any).message
+					: "Something went wrong while uploading the file"
+			);
 		} finally {
 			setIsUploading(false);
 		}

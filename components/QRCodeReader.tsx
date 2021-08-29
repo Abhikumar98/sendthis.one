@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import QrReader from "react-qr-reader";
 import Select from "react-select";
 
@@ -8,7 +9,13 @@ const QRCodeReader = ({ getData }: { getData: (data: string) => void }) => {
 		console.error(error);
 	};
 
-	const handleScan = (result: string) => {
+	const handleScan = (result: string | null) => {
+		if (!result) {
+			toast.error(
+				"Something went wrong while scanning the code. Please try another scanner or use the unique code"
+			);
+			return;
+		}
 		getData(result);
 	};
 

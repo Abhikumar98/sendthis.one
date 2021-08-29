@@ -2,7 +2,6 @@ import React, { FormEventHandler, useEffect, useState } from "react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
-import Input from "../components/Input";
 import Button from "../components/Button";
 import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
