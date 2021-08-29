@@ -1,24 +1,21 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from "react";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
 import "../styles/globals.css";
 import dynamic from "next/dynamic";
-import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
+import { DefaultSeo } from "next-seo";
+import { SEO } from "../contracts";
+import { Banner } from "../components/Banner";
 
 const ReactTooltip = dynamic(() => import("react-tooltip"), {
 	ssr: false,
 });
-// const Toaster = dynamic(() => import("react-hot-toast"), {
-// 	ssr: false,
-// });
 
 import { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }) {
+	const { seo } = pageProps;
+
 	return (
 		<>
 			<Head>
@@ -97,25 +94,42 @@ function MyApp({ Component, pageProps }) {
 				<meta name="theme-color" content="#ffffff" />
 			</Head>
 
+			<DefaultSeo
+				title={seo?.title || SEO.DEFAULT_TITLE}
+				description={seo?.desc || SEO.DEFAULT_DESCRIPTION}
+				// canonical={url}
+				openGraph={{
+					type: "website",
+					locale: "en_US",
+					// url: ,
+					site_name: seo?.title || SEO.SITE_NAME,
+					title: seo?.title || SEO.SITE_NAME,
+					description: seo?.desc || SEO.DEFAULT_DESCRIPTION,
+					images: [
+						{
+							url: seo?.banner || SEO.DEFAULT_OG_IMAGE,
+							alt: seo?.title || SEO.SITE_NAME,
+						},
+					],
+				}}
+				twitter={{
+					handle: SEO.TWITTER_HANDLE,
+					site: SEO.TWITTER_HANDLE,
+					cardType: "summary_large_image",
+				}}
+				additionalLinkTags={[
+					{
+						rel: "shortcut icon",
+						href: seo?.favicon || SEO.FAVICON_LINK,
+					},
+				]}
+			/>
+
 			<div className="bg-bgColor text-textSecondaryColor h-screen w-screen overflow-auto font-sans">
 				<div className="flex flex-col w-full h-full items-center">
 					{!pageProps.hideBanner && (
 						<>
-							<Link href="/">
-								<>
-									<Heading className="cursor-pointer">
-										<span className="mr-8">
-											<Image
-												src="/logo.svg"
-												height={56}
-												width={56}
-												alt="sendthis.one logo"
-											/>
-										</span>
-										Sendthis.one
-									</Heading>
-								</>
-							</Link>
+							<Banner />
 							<Paragraph>Share files and text anonymously.</Paragraph>
 							<div className="w-screen border-b border-b-gray-800"></div>
 						</>
