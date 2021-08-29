@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import queryString from "query-string";
 import DownloadFile from "downloadjs";
-import TextareaAutosize from "react-textarea-autosize";
 import filesize from "filesize";
 
 import { DocumentData, PageStatus } from "../contracts";
@@ -12,7 +11,6 @@ import OtpInput from "react-otp-input";
 import Button from "../components/Button";
 import copy from "copy-to-clipboard";
 import styled from "styled-components";
-import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
 import SubTitle from "../components/Text/SubTitle";
 
