@@ -22,9 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				fields.isPasswordProtected === "true" ? true : false;
 			const password = fields.password ?? false;
 
-			const docRef = firebase
-				.collection(`${FirebaseCollections.Data}`)
-				.doc();
+			const docRef = firebase.collection(`${FirebaseCollections.Data}`).doc();
 
 			const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			const generateCode = customAlphabet(alphabet, 6);

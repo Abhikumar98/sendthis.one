@@ -6,6 +6,7 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
+import Image from "next/image";
 
 const Home = () => {
 	const router = useRouter();
@@ -32,8 +33,6 @@ const Home = () => {
 
 	return (
 		<>
-			<Heading>Sendthis.one</Heading>
-			<Paragraph>Share files and text anonymously.</Paragraph>
 			<div className="flex flex-col sm:flex-row mt-10 items-center justify-center ">
 				<Link href="/upload">
 					<div className=" h-40 w-56 sm:h-40 sm:w-40 md:h-56 md:w-56 lg:h-80 lg:w-80 border border-primaryColor transition-all hover:bg-primaryColor hover:text-primaryTextColor rounded-lg cursor-pointer flex items-center justify-center">

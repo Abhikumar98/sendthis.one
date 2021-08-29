@@ -12,6 +12,9 @@ import Radio from "../components/Radio";
 import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
 import Switch from "../components/Switch";
+import Image from "next/image";
+import Link from "next/link";
+import SubTitle from "../components/Text/SubTitle";
 
 const Upload = () => {
 	const router = useRouter();
@@ -108,7 +111,7 @@ const Upload = () => {
 
 	return (
 		<div className="overflow-scroll">
-			<Heading>Upload files</Heading>
+			<SubTitle>Upload files</SubTitle>
 			<Paragraph className="w-5/6 md:w-3/4 flex mx-auto justify-center mb-10 text-center">
 				Your data will be uploaded anonymously and will be deleted automatically
 				after 24 hours

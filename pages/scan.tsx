@@ -1,6 +1,8 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import SubTitle from "../components/Text/SubTitle";
+import Paragraph from "../components/Text/Paragraph";
 
 const DynamicComponent = dynamic(() => import("../components/QRCodeReader"), {
 	ssr: false,
@@ -16,14 +18,9 @@ const Scan = () => {
 	};
 
 	return (
-		<div className="w-screen h-screen bg-blue-50">
-			<div className="text-4xl py-5 text-center font-bold font-sans">
-				Scan qr code
-			</div>
-			<div className="text-xl py-5 w-3/4 font-sans flex mx-auto justify-center mb-5 text-center">
-				Your data will be uploaded anonymously and will be deleted
-				automatically after 24 hours
-			</div>
+		<div>
+			<SubTitle>Scan qr code</SubTitle>
+			<Paragraph>Scan the generate QR code from the sender</Paragraph>
 			<DynamicComponent getData={handleDataValidation} />
 		</div>
 	);

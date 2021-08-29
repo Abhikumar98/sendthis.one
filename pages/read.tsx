@@ -14,6 +14,7 @@ import copy from "copy-to-clipboard";
 import styled from "styled-components";
 import Heading from "../components/Text/Heading";
 import Paragraph from "../components/Text/Paragraph";
+import SubTitle from "../components/Text/SubTitle";
 
 const Loader = styled.div`
 	display: flex;
@@ -344,8 +345,8 @@ const Read = () => {
 					<div className="loader loader-4" /> */}
 				</Loader>
 			) : (
-				<div>
-					<Heading>Shared data</Heading>
+				<div className="md:w-3/5 px-6 sm:w-4/5 w-full">
+					<SubTitle>Shared data</SubTitle>
 					<Paragraph></Paragraph>
 					<div
 						className={`grid ${
@@ -355,16 +356,16 @@ const Read = () => {
 						} gap-4 w-full`}
 					>
 						{!!data?.textContent?.length && (
-							<div className="">
+							<div className="w-full">
 								<div className="mb-4 text-sm">
 									<label
 										htmlFor="text"
 										className="font-medium text-textPrimaryColor cursor-pointer underline"
 									>
-										Text
+										<Paragraph className="underline mb-2">Text</Paragraph>
 									</label>
 								</div>
-								<div className="">
+								<div className="w-full">
 									<textarea
 										id="about"
 										name="about"
@@ -390,16 +391,18 @@ const Read = () => {
 								</Button>
 							</div>
 						)}
-						<div className="">
-							<div className="text-sm">
-								<label
-									htmlFor="text"
-									className="font-medium text-textPrimaryColor cursor-pointer underline"
-								>
-									Download files
-								</label>
-							</div>
-							{!!files.length && (
+						{!!files.length && (
+							<div className="">
+								<div className="text-sm">
+									<label
+										htmlFor="text"
+										className="font-medium text-textPrimaryColor cursor-pointer underline"
+									>
+										<Paragraph className="underline mb-2">
+											Download files
+										</Paragraph>
+									</label>
+								</div>
 								<div className="flex flex-col justify-center w-full">
 									<ul
 										role="list"
@@ -441,8 +444,8 @@ const Read = () => {
 										))}
 									</ul>
 								</div>
-							)}
-						</div>
+							</div>
+						)}
 					</div>
 				</div>
 			)}

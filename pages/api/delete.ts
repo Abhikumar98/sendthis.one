@@ -28,7 +28,9 @@ export default async (
 					await firebase
 						.collection(FirebaseCollections.Data)
 						.doc(doc.id)
-						.delete();
+						.update({
+							deleted: true,
+						});
 
 					doc.fileNames?.forEach(async (data) => {
 						await storage.file(`${doc.id}/${data}`).delete();
