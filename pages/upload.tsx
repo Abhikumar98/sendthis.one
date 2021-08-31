@@ -109,7 +109,6 @@ const Upload = () => {
 		uploadLimit;
 
 	const isButtonDisabled =
-		!(isText || isFiles) ||
 		!(textContent.length || files.length) ||
 		(password.length !== 6 && requiredPassword);
 
@@ -124,17 +123,6 @@ const Upload = () => {
 				<div className={" rounded-lg p-2 pb-0 z-0"}>
 					<div className="flex justify-between items-center my-5">
 						<div className="relative flex items-start">
-							<div className="flex items-center h-5">
-								<input
-									checked={isText}
-									onChange={(e) => setIsText(e.target.checked)}
-									id="text"
-									aria-describedby="comments-description"
-									name="text"
-									type="checkbox"
-									className="h-4 w-4 text-textPrimaryColor border-gray-300 rounded outline-none"
-								/>
-							</div>
 							<div className="ml-3 text-sm">
 								<label
 									htmlFor="text"
@@ -150,11 +138,11 @@ const Upload = () => {
 							id="about"
 							name="about"
 							rows={3}
-							className={`max-w-lg shadow-sm block w-full  sm:text-sm border border-gray-300 rounded-md ${
-								isText ? "" : "opacity-50"
-							} `}
+							className={
+								"max-w-lg shadow-sm block w-full  sm:text-sm border border-gray-300 rounded-md "
+							}
 							defaultValue={""}
-							disabled={isUploading || !isText}
+							disabled={isUploading}
 							value={textContent}
 							onChange={(e) => setTextContent(e.target.value)}
 							onClick={(e) => e.stopPropagation()}
@@ -164,17 +152,6 @@ const Upload = () => {
 				<div className={"rounded-lg p-2  "}>
 					<div className="flex justify-between items-center my-5">
 						<div className="relative flex items-start">
-							<div className="flex items-center h-5">
-								<input
-									checked={isFiles}
-									onChange={(e) => setIsFiles(e.target.checked)}
-									id="files"
-									aria-describedby="comments-description"
-									name="files"
-									type="checkbox"
-									className="h-4 w-4 text-textPrimaryColor border-gray-300 rounded focus:outline-none"
-								/>
-							</div>
 							<div className="ml-3 text-sm">
 								<label
 									htmlFor="files"
@@ -185,11 +162,7 @@ const Upload = () => {
 							</div>
 						</div>
 					</div>
-					<div
-						className={`mx-auto my-4 ${
-							isFiles ? "" : "opacity-50 cursor-not-allowed pointer-events-none"
-						}`}
-					>
+					<div className={"mx-auto my-4"}>
 						<div className="flex w-full mx-auto items-center justify-center">
 							<label className="w-full flex flex-col items-center px-4 py-6 bg-gray-100 hover:bg-gray-200 uppercase rounded-md">
 								<svg

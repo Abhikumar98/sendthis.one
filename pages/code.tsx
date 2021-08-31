@@ -22,23 +22,25 @@ const code = () => {
 	};
 
 	return (
-		<div className="container m-auto flex h-screen items-center justify-center flex-col font-sans">
-			<div className="text-bold text-3xl mb-10 text-center">
-				Scan this code to get the download your files
+		<div className="container m-auto h-1/2 lg:w-full xl:w-1/2 grid grid-rows-2 sm:grid-cols-2 items-center justify-center text-center">
+			<div className="flex items-center flex-col h-full justify-center">
+				<div className="text-bold text-xl mb-10 text-center">
+					Scan to get download link
+				</div>
+				<QRCode
+					value={
+						code["code"]
+							? `${window.location.origin}/read?code=${code["code"]}`
+							: "invalid"
+					}
+				/>
 			</div>
-			<QRCode
-				value={
-					code["code"]
-						? `${window.location.origin}/read?code=${code["code"]}`
-						: "invalid"
-				}
-			/>
 
-			<div className="my-6">
-				Unique code to access files:
+			<div className="flex items-center flex-col h-full justify-center sm:border-l border-gray-300 px-12">
+				Or, you can use the unique code to access files:
 				<span
 					onClick={copyToClipboard}
-					className="ml-4 font-bold text-xl"
+					className="font-bold text-xl"
 					data-tip={"Click to copy"}
 				>
 					{code["code"]}
