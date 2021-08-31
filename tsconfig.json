@@ -14,6 +14,19 @@
 		"isolatedModules": true,
 		"jsx": "preserve"
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules", "cypress"]
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"functions/firebase.js",
+		"functions/src/index.js",
+		"pages/_document.js"
+	],
+	"exclude": ["node_modules", "cypress"],
+	"env": {
+		"node": true,
+		"commonjs": true,
+		"browser": true,
+		"es6": true
+	}
 }
