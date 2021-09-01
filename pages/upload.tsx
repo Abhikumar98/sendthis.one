@@ -195,15 +195,15 @@ const Upload = () => {
 
 					<div className="flex flex-col justify-center max-h-80 overflow-y-auto">
 						<span>
-							{isFiles && (
+							{
 								<>
 									{Object.values(files).length} file
 									{Object.values(files).length > 1 ? "s" : ""} selected
 								</>
-							)}
+							}
 							&nbsp;
 						</span>
-						{isFiles && files && (
+						{files && (
 							<>
 								{!!Object.values(files).length && (
 									<ul role="list" className="divide-y divide-gray-200 h-40">
