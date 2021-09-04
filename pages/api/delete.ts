@@ -11,6 +11,7 @@ export default async (
 
 		const allDocuments = await firebase
 			.collection(FirebaseCollections.Data)
+			.where("deleted", "!=", true)
 			.get();
 
 		const data = allDocuments.docs.map((doc) => doc.data());
@@ -41,7 +42,7 @@ export default async (
 			}
 		});
 
-		return res.status(200);
+		return res.status(200).json({});
 	} catch (error) {
 		console.error(error);
 	}
