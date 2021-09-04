@@ -172,6 +172,7 @@ const Read = () => {
 			const parsedData = (await data.json()) as Partial<DocumentData>;
 
 			if (parsedData.deleted) {
+				setPageStatus(PageStatus.Deleted);
 				return;
 			}
 
@@ -265,9 +266,10 @@ const Read = () => {
 	}, []);
 
 	if (
-		pageStatus !== PageStatus.Loading &&
-		(!data || !Object.keys(data).length) &&
-		!requiresPassword
+		(pageStatus !== PageStatus.Loading &&
+			(!data || !Object.keys(data).length) &&
+			!requiresPassword) ||
+		pageStatus === PageStatus.Deleted
 	) {
 		return (
 			<div className="h-full w-full flex flex-col justify-center items-center">

@@ -14,6 +14,7 @@ export const uploadLimit = 20971520; // 20MB
 
 export enum PageStatus {
 	Loading = "LOADING",
+	Deleted = "DELETED",
 	Success = "SUCCESS",
 	Error = "ERROR",
 	Idle = "IDLE",
