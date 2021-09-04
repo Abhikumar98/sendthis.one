@@ -18,7 +18,7 @@ export default async (
 			.get();
 
 		if (document.empty) {
-			return res.status(400).json({ deleted: true });
+			return res.status(200).json({ deleted: true });
 		}
 
 		const data = document.docs[0].data() as DocumentData;
