@@ -14,10 +14,11 @@ export default async (
 		const document = await firebase
 			.collection(FirebaseCollections.Data)
 			.where("code", "==", code)
+			.where("deleted", "!=", true)
 			.get();
 
 		if (document.empty) {
-			return res.status(404).json({});
+			return res.status(400).json({ deleted: true });
 		}
 
 		const data = document.docs[0].data() as DocumentData;

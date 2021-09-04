@@ -171,6 +171,10 @@ const Read = () => {
 			const data = await fetch(`/api/read?code=${queryCode}`);
 			const parsedData = (await data.json()) as Partial<DocumentData>;
 
+			if (parsedData.deleted) {
+				return;
+			}
+
 			if (parsedData.isPasswordProtected) {
 				setRequiresPassword(true);
 			} else {
