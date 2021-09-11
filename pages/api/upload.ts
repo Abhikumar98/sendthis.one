@@ -35,6 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				code: code,
 				isPasswordProtected: requirePassword,
 				password: String(password),
+				deleted: false,
 			};
 
 			if (fields.textContent) {

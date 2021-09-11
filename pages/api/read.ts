@@ -23,6 +23,10 @@ export default async (
 
 		const data = document.docs[0].data() as DocumentData;
 
+		if (data.deleted) {
+			return res.status(200).json({ deleted: true });
+		}
+
 		console.log("data --> ", data);
 
 		if (data.isPasswordProtected) {

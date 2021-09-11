@@ -16,33 +16,35 @@ export default async (
 
 		const data = allDocuments.docs.map((doc) => doc.data());
 
-		data.forEach(async (doc) => {
-			try {
-				const date = new Date(doc.deleteDate.toDate());
+		console.log("data ===> ");
 
-				const isPastDate = date <= new Date();
+		// data.forEach(async (doc) => {
+		// 	try {
+		// 		const date = new Date(doc.deleteDate.toDate());
 
-				console.log("in document -> ", doc.id);
+		// 		const isPastDate = date <= new Date();
 
-				if (isPastDate) {
-					console.log("deleting -> ", doc.id);
-					await firebase
-						.collection(FirebaseCollections.Data)
-						.doc(doc.id)
-						.update({
-							deleted: true,
-						});
+		// 		console.log("in document -> ", doc.id);
 
-					doc.fileNames?.forEach(async (data: string) => {
-						await storage.file(`${doc.id}/${data}`).delete();
-					});
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		});
+		// 		if (isPastDate) {
+		// 			console.log("deleting -> ", doc.id);
+		// 			await firebase
+		// 				.collection(FirebaseCollections.Data)
+		// 				.doc(doc.id)
+		// 				.update({
+		// 					deleted: true,
+		// 				});
 
-		return res.status(200).json({});
+		// 			doc.fileNames?.forEach(async (data: string) => {
+		// 				await storage.file(`${doc.id}/${data}`).delete();
+		// 			});
+		// 		}
+		// 	} catch (error) {
+		// 		console.error(error);
+		// 	}
+		// });
+
+		res.status(200).json(data);
 	} catch (error) {
 		console.error(error);
 	}
