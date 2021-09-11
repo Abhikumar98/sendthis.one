@@ -18,33 +18,33 @@ export default async (
 
 		console.log("data ===> ");
 
-		// data.forEach(async (doc) => {
-		// 	try {
-		// 		const date = new Date(doc.deleteDate.toDate());
+		data.forEach(async (doc) => {
+			try {
+				const date = new Date(doc.deleteDate.toDate());
 
-		// 		const isPastDate = date <= new Date();
+				const isPastDate = date <= new Date();
 
-		// 		console.log("in document -> ", doc.id);
+				console.log("in document -> ", doc.id);
 
-		// 		if (isPastDate) {
-		// 			console.log("deleting -> ", doc.id);
-		// 			await firebase
-		// 				.collection(FirebaseCollections.Data)
-		// 				.doc(doc.id)
-		// 				.update({
-		// 					deleted: true,
-		// 				});
+				if (isPastDate) {
+					console.log("deleting -> ", doc.id);
+					await firebase
+						.collection(FirebaseCollections.Data)
+						.doc(doc.id)
+						.update({
+							deleted: true,
+						});
 
-		// 			doc.fileNames?.forEach(async (data: string) => {
-		// 				await storage.file(`${doc.id}/${data}`).delete();
-		// 			});
-		// 		}
-		// 	} catch (error) {
-		// 		console.error(error);
-		// 	}
-		// });
+					doc.fileNames?.forEach(async (data: string) => {
+						await storage.file(`${doc.id}/${data}`).delete();
+					});
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		});
 
-		res.status(200).json(data);
+		res.status(200).json({});
 	} catch (error) {
 		console.error(error);
 	}
